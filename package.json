@@ -6,23 +6,25 @@
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
+    "@dotenvx/dotenvx": "^1.43.0",
     "@sap/cds": "^8",
     "cors": "^2.8.5",
-    "express": "^4.21.2"
+    "express": "^4.21.2",
+    "mongoose": "^8.14.1"
   },
   "devDependencies": {
     "@cap-js/cds-types": "^0.10.0",
     "@cap-js/sqlite": "^1"
   },
-  "scripts": { 
-    "build": "cds build", 
-    "dev": "cds watch", 
-    "start": "cds-serve" 
-  }, 
-    "cds": { 
-      "folders": { 
-      "db": "src/api/models", 
-      "srv":"src/api/routes" 
-} 
-}
+  "scripts": {
+    "build": "cds build",
+    "dev": "cds watch",
+    "start": "cds-serve"
+  },
+  "cds": {
+    "folders": {
+      "db": "src/api/models",
+      "srv": "src/api/routes"
+    }
+  }
 }

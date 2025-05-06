@@ -2,6 +2,8 @@ const express = require('express');
 const cds = require('@sap/cds'); 
 const cors = require('cors') 
 const router = express.Router(); 
+const mongoose = require('./src/config/conectionToMongoDB'); 
+const dotenvx = require ('./src/config/dotenvxConfig'); 
 
 module.exports = async (o) => { 
     let app = express(); 
