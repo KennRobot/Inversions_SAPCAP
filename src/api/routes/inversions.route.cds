@@ -10,8 +10,13 @@ using {inv as myinv} from '../models/inversions_mongo';
 
 service inversionsRoute @(path:'/api/inv'){
     entity users as projection on myinv.users;
+    entity strategies as projection on myinv.strategies;
 //******************* PARA MONGO DB ***********************************
-    @Core.Description: 'get-all-prices-inversions'
+    @Core.Description: 'get-all-users'
     @path :'GetAllUsers'
     function GetAllUsers() returns array of users;
+
+    @Core.Description: 'get-all-strategies'
+    @path :'GetAlStrategies'
+    function GetAlStrategies() returns array of strategies;
 }
