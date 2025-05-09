@@ -71,4 +71,23 @@ async function CreateIronCondorStrategy(req) {
   }
 }
 
-module.exports = { GetAllStrategies, CreateIronCondorStrategy};
+async function GetStrategiesByUser(req) {
+  try {
+    // Obtener el USER_ID desde el cuerpo de la solicitud (req.data)
+    const { USER_ID } = req.data; // Asumiendo que el body es { "USER_ID": "user-001" }
+
+    if (!USER_ID) {
+      throw new Error("El ID de usuario no fue proporcionado.");
+    }
+
+    // Buscar estrategias por el userId
+    const strategies = await strategiesSchema.find({ USER_ID }).lean();
+    
+    return strategies;
+  } catch (error) {
+    throw new Error(`Error al obtener las estrategias: ${error.message}`);
+  }
+}
+
+
+module.exports = { GetAllStrategies, CreateIronCondorStrategy, GetStrategiesByUser };

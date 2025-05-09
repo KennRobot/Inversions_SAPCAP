@@ -42,4 +42,8 @@ service inversionsRoute @(path:'/api/inv'){
         status     : String;
     };
 
+    @Core.Description: 'Get strategies by user ID'
+    @path: 'GetStrategiesByUser'
+    function GetStrategiesByUser(USER_ID: String) returns array of strategies;
+
 }

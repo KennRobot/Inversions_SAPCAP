@@ -1,6 +1,6 @@
 const cds = require('@sap/cds');
 const {GetAllUsers,GetUserById } = require('../services/users.services')
-const {GetAllStrategies, CreateIronCondorStrategy} = require('../services/strategies.services')
+const {GetAllStrategies, CreateIronCondorStrategy, GetStrategiesByUser} = require('../services/strategies.services')
 
 module.exports = class InversionsClass extends cds.ApplicationService {
     async init() {
@@ -21,6 +21,9 @@ module.exports = class InversionsClass extends cds.ApplicationService {
         });
         this.on('CreateIronCondorStrategy', async (req) => {
             return await CreateIronCondorStrategy(req);
+        });
+        this.on('GetStrategiesByUser', async (req) => {
+            return await GetStrategiesByUser(req);
         });
 
         // Llamada al método init del servicio base de CAP
