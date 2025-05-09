@@ -9,14 +9,18 @@ using {inv as myinv} from '../models/inversions_mongo';
 //del metodo POST, por lo anterior explicado de SAP 
 
 service inversionsRoute @(path:'/api/inv'){
-    entity users as projection on myinv.users;
+    entity users as projection on myinv.Users;
     entity strategies as projection on myinv.strategies;
 //******************* PARA MONGO DB ***********************************
     @Core.Description: 'get-all-users'
     @path :'GetAllUsers'
     function GetAllUsers() returns array of users;
 
+    @Core.Description: 'get-one-user'
+    @path: 'GetUserById'
+    function GetUserById (USER_ID: String) returns users;
+
     @Core.Description: 'get-all-strategies'
-    @path :'GetAlStrategies'
-    function GetAlStrategies() returns array of strategies;
+    @path :'GetAllStrategies'
+    function GetAllStrategies() returns array of strategies;
 }

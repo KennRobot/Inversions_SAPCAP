@@ -1,16 +1,4 @@
-//namespace del archivo
 namespace inv;
-
-//entidad de pricehistory
-entity users{
-
-    key ID      :Integer;
-    USERNAME    :String;
-    EMAIL       :String;
-    PASSWORD_HASH  :String;
-    CREATE_AT        :DateTime;
-
-};
 
 entity strategies {
     key STRATEGY_ID               : String;
@@ -41,3 +29,28 @@ entity strategies {
 
         NOTES                    : String;
 };
+
+entity Users {
+  key idUser    : String(36);         // e.g., "user-001"
+      name      : String(100);
+      email     : String(255);
+      createdAt : Timestamp;
+      wallet    : Association to one Wallet;
+}
+
+entity Wallet {
+  key id        : UUID;
+      balance   : Decimal(15,2);
+      currency  : String(3);
+      movements : Composition of many Movements on movements.wallet = $self;
+}
+
+entity Movements {
+  key movementId : String(36);
+      wallet      : Association to Wallet;
+      date        : Timestamp;
+      type        : String(20);  // Enum: 'deposit', 'trade', 'fee'
+      amount      : Decimal(15,2);
+      description : String(255);
+}
+

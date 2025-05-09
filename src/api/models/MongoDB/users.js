@@ -1,11 +1,29 @@
 const mongoose = require('mongoose');
 
+const movementSchema = new mongoose.Schema({
+  movementId: { type: String, required: true },
+  date: { type: Date, required: true },
+  type: { 
+    type: String, 
+    enum: ['deposit', 'withdrawal', 'trade', 'fee'], 
+    required: true 
+  },
+  amount: { type: Number, required: true },
+  description: { type: String }
+}, { _id: false });
+
+const walletSchema = new mongoose.Schema({
+  balance: { type: Number, required: true },
+  currency: { type: String, required: true },
+  movements: [movementSchema]
+}, { _id: false });
+
 const usersSchema = new mongoose.Schema({
-    ID: { type: Number, required: true },
-    USERNAME:   { type: String, required: true },
-    EMAIL:   { type: String, required: true },
-    PASSWORD_HASH:    { type: Number, required: true },
-    CREATE_AT:   { type: Date, required: true }
+  idUser: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
+  email: { type: String, required: true },
+  createdAt: { type: Date, required: true },
+  wallet: { type: walletSchema, required: true }
 });
 
 module.exports = mongoose.model(
