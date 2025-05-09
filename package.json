@@ -7,7 +7,9 @@
   "private": true,
   "dependencies": {
     "@dotenvx/dotenvx": "^1.43.0",
+    "@mui/material": "^7.1.0",
     "@sap/cds": "^8",
+    "axios": "^1.9.0",
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "mongoose": "^8.14.1",
