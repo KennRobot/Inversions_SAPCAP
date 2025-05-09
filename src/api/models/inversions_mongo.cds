@@ -31,7 +31,7 @@ entity strategies {
 };
 
 entity Users {
-  key idUser    : String(36);         // e.g., "user-001"
+  key idUser    : String(36);         //"user-001"
       name      : String(100);
       email     : String(255);
       createdAt : Timestamp;
@@ -49,7 +49,7 @@ entity Movements {
   key movementId : String(36);
       wallet      : Association to Wallet;
       date        : Timestamp;
-      type        : String(20);  // Enum: 'deposit', 'trade', 'fee'
+      type        : String(20);  //'deposit', 'trade', 'fee'
       amount      : Decimal(15,2);
       description : String(255);
 }

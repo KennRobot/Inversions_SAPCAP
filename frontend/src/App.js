@@ -16,17 +16,17 @@ function App() {
   const [tab, setTab] = useState(0);
   const [data, setData] = useState([]);
   const [userId, setUserId] = useState('');
-  const [sortDirection, setSortDirection] = useState('asc'); // Para la ordenación
-  const [sortedColumn, setSortedColumn] = useState(null); // Para la columna ordenada
+  const [sortDirection, setSortDirection] = useState('asc');
+  const [sortedColumn, setSortedColumn] = useState(null);
 
   useEffect(() => {
     if (endpoints[tab].requiresUserId && !userId) {
-      setData([]); // Si no hay USER_ID, no hacemos la solicitud
+      setData([]);
       return;
     }
 
     const url = endpoints[tab].requiresUserId
-      ? `${endpoints[tab].url}?USER_ID=${userId}` // Agregar el parámetro a la URL
+      ? `${endpoints[tab].url}?USER_ID=${userId}`
       : endpoints[tab].url;
 
     axios.get(url)
@@ -39,7 +39,6 @@ function App() {
       });
   }, [tab, userId]);
 
-  // Función para manejar la ordenación de columnas
   const handleSort = (column) => {
     const newSortDirection = sortedColumn === column && sortDirection === 'asc' ? 'desc' : 'asc';
     setSortDirection(newSortDirection);
@@ -55,68 +54,90 @@ function App() {
   };
 
   return (
-    <Box sx={{ p: 2 }}>
-      <Tabs value={tab} onChange={(e, newTab) => setTab(newTab)}>
-        {endpoints.map((ep, i) => <Tab key={i} label={ep.label} />)}
-      </Tabs>
+    <Box sx={{ backgroundColor: '#f0f2f5', minHeight: '100vh', py: 4 }}>
+      <Box sx={{
+        maxWidth: 1200,
+        margin: '0 auto',
+        backgroundColor: 'white',
+        borderRadius: 4,
+        boxShadow: 3,
+        p: 4
+      }}>
+        <Tabs value={tab} onChange={(e, newTab) => setTab(newTab)} centered>
+          {endpoints.map((ep, i) => <Tab key={i} label={ep.label} />)}
+        </Tabs>
 
-      {endpoints[tab].requiresUserId && (
-        <Box sx={{ mt: 2 }}>
-          <TextField
-            label="User ID"
-            value={userId}
-            onChange={(e) => setUserId(e.target.value)}
-            variant="outlined"
-            fullWidth
-          />
-        </Box>
-      )}
-
-      <Box sx={{ mt: 3 }}>
-        {data.length > 0 ? (
-          <Table size="small" sx={{ minWidth: 650, borderCollapse: 'collapse' }}>
-            <TableHead>
-              <TableRow>
-                {Object.keys(data[0]).map((key) => (
-                  <TableCell key={key} sx={{
-                    fontWeight: 'bold',
-                    backgroundColor: '#f5f5f5',
-                    color: '#333',
-                    textAlign: 'center',
-                    cursor: 'pointer',
-                  }} onClick={() => handleSort(key)}>
-                    <Tooltip title="Ordenar por esta columna">
-                      <IconButton size="small">
-                        <SortIcon fontSize="small" />
-                      </IconButton>
-                    </Tooltip>
-                    {key}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data.map((row, i) => (
-                <TableRow key={i} sx={{
-                  '&:nth-of-type(odd)': { backgroundColor: '#f9f9f9' },
-                  '&:hover': { backgroundColor: '#f1f1f1' }
-                }}>
-                  {Object.values(row).map((val, j) => (
-                    <TableCell key={j} sx={{ textAlign: 'center' }}>
-                      {JSON.stringify(val)}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        ) : (
-          <Typography variant="body2" color="text.secondary">
-            {endpoints[tab].requiresUserId && !userId
-              ? 'Ingresa un USER_ID para ver resultados.'
-              : 'No hay datos disponibles.'}
-          </Typography>
+        {endpoints[tab].requiresUserId && (
+          <Box sx={{ mt: 3 }}>
+            <TextField
+              label="User ID"
+              value={userId}
+              onChange={(e) => setUserId(e.target.value)}
+              variant="outlined"
+              fullWidth
+            />
+          </Box>
         )}
+
+        <Box sx={{ mt: 4 }}>
+          {data.length > 0 ? (
+            <Box sx={{ overflowX: 'auto' }}>
+              <Table size="small" sx={{
+                minWidth: 650,
+                borderCollapse: 'separate',
+                borderSpacing: 0,
+                '& th, & td': {
+                  borderBottom: '1px solid #e0e0e0',
+                  padding: '8px 16px',
+                  whiteSpace: 'nowrap', // Fuerza que el texto no haga salto de línea
+                },
+              }}>
+                <TableHead>
+                  <TableRow>
+                    {Object.keys(data[0]).map((key) => (
+                      <TableCell key={key} sx={{
+                        fontWeight: 'bold',
+                        backgroundColor: '#f9fafb',
+                        color: '#333',
+                        textAlign: 'center',
+                        cursor: 'pointer',
+                        borderBottom: '2px solid #ddd',
+                      }} onClick={() => handleSort(key)}>
+                        <Tooltip title="Ordenar por esta columna">
+                          <IconButton size="small">
+                            <SortIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                        {key}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {data.map((row, i) => (
+                    <TableRow key={i} sx={{
+                      '&:nth-of-type(odd)': { backgroundColor: '#f9f9f9' },
+                      '&:hover': { backgroundColor: '#f1f1f1' }
+                    }}>
+                      {Object.values(row).map((val, j) => (
+                        <TableCell key={j} sx={{ textAlign: 'center' }}>
+                          {JSON.stringify(val)}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Box>
+          ) : (
+            <Typography variant="body2" color="text.secondary">
+              {endpoints[tab].requiresUserId && !userId
+                ? 'Ingresa un USER_ID para ver resultados.'
+                : 'No hay datos disponibles.'}
+            </Typography>
+          )}
+</Box>
+
       </Box>
     </Box>
   );
