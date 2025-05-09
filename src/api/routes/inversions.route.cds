@@ -11,7 +11,7 @@ using {inv as myinv} from '../models/inversions_mongo';
 service inversionsRoute @(path:'/api/inv'){
     entity users as projection on myinv.Users;
     entity strategies as projection on myinv.strategies;
-//******************* PARA MONGO DB ***********************************
+//******************* Users ***********************************
     @Core.Description: 'get-all-users'
     @path :'GetAllUsers'
     function GetAllUsers() returns array of users;
@@ -19,7 +19,7 @@ service inversionsRoute @(path:'/api/inv'){
     @Core.Description: 'get-one-user'
     @path: 'GetUserById'
     function GetUserById (USER_ID: String) returns users;
-//Strategies
+//****************** Strategies *******************************
     @Core.Description: 'get-all-strategies'
     @path :'GetAllStrategies'
     function GetAllStrategies() returns array of strategies;
