@@ -19,8 +19,27 @@ service inversionsRoute @(path:'/api/inv'){
     @Core.Description: 'get-one-user'
     @path: 'GetUserById'
     function GetUserById (USER_ID: String) returns users;
-
+//Strategies
     @Core.Description: 'get-all-strategies'
     @path :'GetAllStrategies'
     function GetAllStrategies() returns array of strategies;
+
+    @Core.Description: 'create-strategy-Iron-Condor'
+    @path : 'CreateIronCondorStrategy'
+    action CreateIronCondorStrategy(
+        userId   : String,
+        type     : String,
+        symbol   : String,
+        startDate: Date,
+        endDate  : Date,
+        legs     : many {
+            type     : String;
+            position : String;
+            strike   : Integer;
+    }
+    ) returns {
+        strategyId : String;
+        status     : String;
+    };
+
 }

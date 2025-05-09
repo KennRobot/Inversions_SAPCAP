@@ -10,7 +10,8 @@
     "@sap/cds": "^8",
     "cors": "^2.8.5",
     "express": "^4.21.2",
-    "mongoose": "^8.14.1"
+    "mongoose": "^8.14.1",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@cap-js/cds-types": "^0.10.0",
