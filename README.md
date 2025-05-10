@@ -10,6 +10,7 @@ File or Folder | Purpose
 `db/` | your domain models and data go here
 `frontend/` | your frontend
 `src/` | your service models and code go here
+`.env` | your variables of entorn for Mongo DB
 `package.json` | project metadata and configuration
 `readme.md` | this getting started guide
 `server.js` | this main project
