@@ -1,8 +1,8 @@
 # Getting Started
 
-Welcome to your new project.
+Welcome to your new project for class NoSQL.
 
-It contains these folders and files, following our recommended project layout:
+It contains these folders and files, following our recommended project layout create in SAP CAP:
 
 File or Folder | Purpose
 ---------|----------
@@ -32,20 +32,17 @@ File or Folder api | Purpose
 http://localhost:3020/api/inv
 
 ## ENDPOINTS
+Endpoint | URL | Body
+---------|----------
+GET  |  http://localhost:3020/api/inv/GetAllUsers | none
 
+GET  |  http://localhost:3020/api/inv/GetAllSimulation | none
 
-GET    http://localhost:3020/api/inv/GetAllUsers
+GET  |  http://localhost:3020/api/inv/GetAllStrategies | none
 
-GET    http://localhost:3020/api/inv/GetAllSimulation
+GET  |  http://localhost:3020/api/inv/GetHistoricalOptions?symbol=AMZN | none
 
-GET    http://localhost:3020/api/inv/GetAllStrategies
+GET  |  http://localhost:3020/api/inv/GetUserById | {"USER_ID": "user-001"}
 
-GET    http://localhost:3020/api/inv/GetHistoricalOptions?symbol=AMZN
-
-GET    http://localhost:3020/api/inv/GetUserById
-        body:{
-            "USER_ID": "user-001"
-        }
-
-GET https://www.alphavantage.co/query?function=HISTORICAL_OPTIONS&symbol=AMZN&apikey=9BIPPPBV4TA9MZGE
+GET | https://www.alphavantage.co/query?function=HISTORICAL_OPTIONS&symbol=AMZN&apikey=9BIPPPBV4TA9MZGE | none
 
