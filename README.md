@@ -32,8 +32,9 @@ File or Folder api | Purpose
 http://localhost:3020/api/inv
 
 ## ENDPOINTS
+
 Endpoint | URL | Body
----------|----------
+---------|----------|---------
 `GET`  |  http://localhost:3020/api/inv/GetAllUsers | none
 `GET`  |  http://localhost:3020/api/inv/GetAllSimulation | none
 `GET`  |  http://localhost:3020/api/inv/GetAllStrategies | none
