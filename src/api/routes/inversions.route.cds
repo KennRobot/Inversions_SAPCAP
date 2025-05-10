@@ -41,8 +41,36 @@ service inversionsRoute @(path:'/api/inv'){
     function GetStrategiesByUser(USER_ID: String) returns array of strategies;
 
     //****************** Simulation *******************************
-@Core.Description: 'get-all-simulations'
+    @Core.Description: 'get-all-simulations'
     @path :'GetAllSimulation'
     function GetAllSimulation() returns array of users;
+
+    //****************** Nuevo: Obtener Opciones Históricas *******************************
+@Core.Description: 'Get Historical Options from Alpha Vantage'
+@path: 'GetHistoricalOptions'
+function GetHistoricalOptions(symbol: String) returns {
+    optionsData: many {
+        contractID         : String;
+        symbol             : String;
+        expiration         : Date;
+        strike             : Decimal(10,2);
+        type               : String;
+        last               : Decimal(10,2);
+        mark               : Decimal(10,2);
+        bid                : Decimal(10,2);
+        bid_size           : Integer;
+        ask                : Decimal(10,2);
+        ask_size           : Integer;
+        volume             : Integer;
+        open_interest      : Integer;
+        date               : Date;
+        implied_volatility : Decimal(10,5);
+        delta              : Decimal(10,5);
+        gamma              : Decimal(10,5);
+        theta              : Decimal(10,5);
+        vega               : Decimal(10,5);
+        rho                : Decimal(10,5);
+    };
+};
 
 }
