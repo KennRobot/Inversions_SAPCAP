@@ -4,6 +4,7 @@ using {inv as myinv} from '../models/inversions_mongo';
 service inversionsRoute @(path:'/api/inv'){
     entity users as projection on myinv.Users;
     entity strategies as projection on myinv.strategies;
+    entity simulation as projection on myinv.Simulation;
 //******************* Users ***********************************
     @Core.Description: 'get-all-users'
     @path :'GetAllUsers'
@@ -38,5 +39,10 @@ service inversionsRoute @(path:'/api/inv'){
     @Core.Description: 'Get strategies by user ID'
     @path: 'GetStrategiesByUser'
     function GetStrategiesByUser(USER_ID: String) returns array of strategies;
+
+    //****************** Simulation *******************************
+@Core.Description: 'get-all-simulations'
+    @path :'GetAllSimulation'
+    function GetAllSimulation() returns array of users;
 
 }

@@ -1,5 +1,6 @@
 namespace inv;
 
+//************************ESTREATEGIAS********************** */
 entity strategies {
     key STRATEGY_ID               : String;
         USER_ID                   : String;
@@ -30,6 +31,7 @@ entity strategies {
         NOTES                    : String;
 };
 
+//*************************USUARIOS ************************ */
 entity Users {
   key idUser    : String(36);         //"user-001"
       name      : String(100);
@@ -52,5 +54,49 @@ entity Movements {
       type        : String(20);  //'deposit', 'trade', 'fee'
       amount      : Decimal(15,2);
       description : String(255);
+}
+
+//********************** SIMULACION ************************ */
+
+entity Simulation {
+  key idSimulation       : String(36);           // Ej: "AAPL_2024-01-01"
+      idUser             : String(36);
+      idStrategy         : String(10);           // Ej: "IRON"
+      simulationName     : String(100);
+      symbol             : String(10);           // Ej: "AAPL"
+      startDate          : Date;
+      endDate            : Date;
+      amount             : Decimal(15,2);        // Siempre en USD
+      specs              : String(100);          // Ej: "SHORT:50&LONG:200"
+      result             : Decimal(15,2);
+      percentageReturn   : Decimal(5,2);
+      signals            : Composition of many Signals on signals.simulation = $self;
+      detailRow          : Composition of many DetailRows on detailRow.simulation = $self;
+}
+
+entity Signals {
+  key ID                 : UUID;
+      simulation         : Association to Simulation;
+      date               : Timestamp;
+      type               : String(10);           // 'buy' | 'sell'
+      price              : Decimal(10,2);
+      reasoning          : String(255);
+}
+
+entity DetailRows {
+  key ID                 : UUID;
+      simulation         : Association to Simulation;
+      ACTIVED            : Boolean;
+      DELETED            : Boolean;
+      detailRowReg       : Composition of many DetailRowRegs on detailRowReg.detailRow = $self;
+}
+
+entity DetailRowRegs {
+  key ID                 : UUID;
+      detailRow          : Association to DetailRows;
+      CURRENT            : Boolean;
+      REGDATE            : Timestamp;
+      REGTIME            : Timestamp;
+      REGUSER            : String(100);
 }
 
