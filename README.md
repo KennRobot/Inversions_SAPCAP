@@ -8,25 +8,18 @@ File or Folder | Purpose
 ---------|----------
 `app/` | content for UI frontends goes here
 `db/` | your domain models and data go here
-`srv/` | your service models and code go here
+`src/` | your service models and code go here
 `package.json` | project metadata and configuration
 `readme.md` | this getting started guide
+`server.js` | this main project
 
 
-## Next Steps
+## URL
 
-- Open a new terminal and run `cds watch`
-- (in VS Code simply choose _**Terminal** > Run Task > cds watch_)
-- Start adding content, for example, a [db/schema.cds](db/schema.cds).
+http://localhost:3020/api/inv
 
+## ENDPOINTS
 
-## Learn More
-
-Learn more at https://cap.cloud.sap/docs/get-started/.
-
-
-ENDPOINTS:
-URL: http://localhost:3020/api/inv
 
 GET    http://localhost:3020/api/inv/GetAllUsers
 GET    http://localhost:3020/api/inv/GetAllSimulation
