@@ -17,6 +17,12 @@ service inversionsRoute @(path: '/api/inv') {
     @path            : 'GetUserById'
     function GetUserById(USER_ID : String)                     returns users;
 
+    @Core.Description: 'create new user'
+    @path            : 'CreateUser'
+    action   CreateUser(name : String,
+                        email : String)                        
+                        returns users;
+
     //****************** Strategies *******************************
     @Core.Description: 'get-all-strategies'
     @path            : 'GetAllStrategies'
@@ -53,22 +59,22 @@ service inversionsRoute @(path: '/api/inv') {
     function GetAllPricesHistory()                             returns array of priceshistory;
 
     //****************** Nuevo: Calcular Indicadores *******************************
-    @Core.Description: 'Calculate indicators for given symbol'
-    @path            : 'CalculateIndicators'
-    function CalculateIndicators(symbol : String,
-                                 indicators : array of String) returns array of {
-        date    : Date;
-        close   : Decimal(10, 2);
-        EMA_50  : Decimal(10, 2);
-        EMA_200 : Decimal(10, 2);
-        RSI     : Decimal(10, 2);
-        MACD    : Decimal(10, 2);
+    @Core.Description: 'Calculate investment indicators'
+    @path: 'CalculateIndicators'
+    action CalculateIndicators(
+        symbol: String,
+        timeframe: String,
+        interval: String,
+        indicators: array of String
+    ) returns {
+        symbol: String;
+        timeframe: String;
+        interval: String;
+        calculatedIndicators: {
+            RSI: Decimal(5,2);
+            MACD: Decimal(5,2);
+        }
     };
 
-    @Core.Description: 'create new user'
-    @path            : 'CreateUser'
-    action   CreateUser(name : String,
-                        email : String)                        
-                        returns users;
 
 }
