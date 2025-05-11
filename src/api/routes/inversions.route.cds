@@ -46,9 +46,9 @@ service inversionsRoute @(path:'/api/inv'){
     function GetAllSimulation() returns array of users;
 
     //****************** Nuevo: Obtener Opciones Históricas *******************************
-@Core.Description: 'Get Historical Options from Alpha Vantage'
-@path: 'GetHistoricalOptions'
-function GetHistoricalOptions(symbol: String) returns {
+    @Core.Description: 'Get Historical Options from Alpha Vantage'
+    @path: 'GetHistoricalOptions'
+    function GetHistoricalOptions(symbol: String) returns {
     optionsData: many {
         contractID         : String;
         symbol             : String;
@@ -70,7 +70,22 @@ function GetHistoricalOptions(symbol: String) returns {
         theta              : Decimal(10,5);
         vega               : Decimal(10,5);
         rho                : Decimal(10,5);
+        };
     };
-};
+
+       //****************** Nuevo: Calcular Indicadores *******************************
+    @Core.Description: 'Calculate indicators for given symbol'
+    @path: 'CalculateIndicators'
+    function CalculateIndicators(
+        symbol: String,
+        indicators: Array of String
+    ) returns array of {
+        date: Date;
+        close: Decimal(10,2);
+        EMA_50: Decimal(10,2);
+        EMA_200: Decimal(10,2);
+        RSI: Decimal(10,2);
+        MACD: Decimal(10,2);
+    };
 
 }
