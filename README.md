@@ -43,3 +43,9 @@ Endpoint | URL | Body | Use
 `GET`  |  http://localhost:3020/api/inv/GetUserById | {"USER_ID": "user-001"} | Yes
 `GET` | https://www.alphavantage.co/query?function=HISTORICAL_OPTIONS&symbol=AMZN&apikey=9BIPPPBV4TA9MZGE | none | No
 `GET` | http://localhost:3020/api/inv/GetAllPricesHistory | none | Yes
+`POST` | http://localhost:3020/api/inv/CalculateIndicators?symbol=AMZN&timeframe=6months&interval=1d | {
+  "symbol": "AMZN",
+  "timeframe": "1months",
+  "interval": "6d",
+  "indicators": ["RSI", "MACD"]
+} |Yes
