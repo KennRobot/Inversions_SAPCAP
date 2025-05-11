@@ -1,3 +1,9 @@
+/* NO USAR DE MOMENTO */
+
+
+
+
+
 const technicalindicators = require('technicalindicators');
 const { fetchHistoricalOptions } = require('../models/MongoDB/alphavantage');
 

@@ -53,18 +53,6 @@ service inversionsRoute @(path:'/api/inv'){
     function GetAllPricesHistory() returns array of priceshistory;
 
        //****************** Nuevo: Calcular Indicadores *******************************
-    @Core.Description: 'Calculate indicators for given symbol'
-    @path: 'CalculateIndicators'
-    function CalculateIndicators(
-        symbol: String,
-        indicators: Array of String
-    ) returns array of {
-        date: Date;
-        close: Decimal(10,2);
-        EMA_50: Decimal(10,2);
-        EMA_200: Decimal(10,2);
-        RSI: Decimal(10,2);
-        MACD: Decimal(10,2);
-    };
+
 
 }
