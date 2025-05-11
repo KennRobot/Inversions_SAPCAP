@@ -73,7 +73,6 @@ entity Simulation {
       signals            : Composition of many Signals on signals.simulation = $self;
       detailRow          : Composition of many DetailRows on detailRow.simulation = $self;
 }
-
 entity Signals {
   key ID                 : UUID;
       simulation         : Association to Simulation;
@@ -82,7 +81,6 @@ entity Signals {
       price              : Decimal(10,2);
       reasoning          : String(255);
 }
-
 entity DetailRows {
   key ID                 : UUID;
       simulation         : Association to Simulation;
@@ -90,7 +88,6 @@ entity DetailRows {
       DELETED            : Boolean;
       detailRowReg       : Composition of many DetailRowRegs on detailRowReg.detailRow = $self;
 }
-
 entity DetailRowRegs {
   key ID                 : UUID;
       detailRow          : Association to DetailRows;
@@ -98,5 +95,29 @@ entity DetailRowRegs {
       REGDATE            : Timestamp;
       REGTIME            : Timestamp;
       REGUSER            : String(100);
+}
+
+//************************** PARA PRICES_HISTORY *****************8 */
+entity PRICES_HISTORY {
+    key CONTRACT_ID         : String;
+        SYMBOL              : String;
+        EXPIRATION          : Date;
+        STRIKE              : Decimal(10,2);
+        TYPE                : String;  // 'call' o 'put'
+        LAST                : Decimal(10,2);
+        MARK                : Decimal(10,2);
+        BID                 : Decimal(10,2);
+        BID_SIZE            : Integer;
+        ASK                 : Decimal(10,2);
+        ASK_SIZE            : Integer;
+        VOLUME              : Integer;
+        OPEN_INTEREST       : Integer;
+        DATE                : Date;
+        IMPLIED_VOLATILITY  : Decimal(10,5);
+        DELTA               : Decimal(10,5);
+        GAMMA               : Decimal(10,5);
+        THETA               : Decimal(10,5);
+        VEGA                : Decimal(10,5);
+        RHO                 : Decimal(10,5);
 }
 

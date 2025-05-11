@@ -34,11 +34,12 @@ http://localhost:3020/api/inv
 
 ## ENDPOINTS
 
-Endpoint | URL | Body
+Endpoint | URL | Body | Use
 ---------|----------|---------
-`GET`  |  http://localhost:3020/api/inv/GetAllUsers | none
-`GET`  |  http://localhost:3020/api/inv/GetAllSimulation | none
-`GET`  |  http://localhost:3020/api/inv/GetAllStrategies | none
-`GET`  |  http://localhost:3020/api/inv/GetHistoricalOptions?symbol=AMZN | none
-`GET`  |  http://localhost:3020/api/inv/GetUserById | {"USER_ID": "user-001"}
-`GET` | https://www.alphavantage.co/query?function=HISTORICAL_OPTIONS&symbol=AMZN&apikey=9BIPPPBV4TA9MZGE | none
+`GET`  |  http://localhost:3020/api/inv/GetAllUsers | none | Yes
+`GET`  |  http://localhost:3020/api/inv/GetAllSimulation | none | Yes
+`GET`  |  http://localhost:3020/api/inv/GetAllStrategies | none | Yes
+`GET`  |  http://localhost:3020/api/inv/GetHistoricalOptions?symbol=AMZN | none | No
+`GET`  |  http://localhost:3020/api/inv/GetUserById | {"USER_ID": "user-001"} | Yes
+`GET` | https://www.alphavantage.co/query?function=HISTORICAL_OPTIONS&symbol=AMZN&apikey=9BIPPPBV4TA9MZGE | none | No
+`GET` | http://localhost:3020/api/inv/GetAllPricesHistory | none | Yes
