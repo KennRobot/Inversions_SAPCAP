@@ -2,8 +2,6 @@ const cds = require('@sap/cds');
 const {GetAllUsers,GetUserById, CreateUser } = require('../services/users.services')
 const {GetAllStrategies, CreateIronCondorStrategy, GetStrategiesByUser} = require('../services/strategies.services')
 const {GetAllSimulation} = require('../services/simulacion.services')
-const {fetchHistoricalOptions} = require('../models/MongoDB/alphavantage')
-const { calculateIndicators } = require('../services/ironcondor');
 const {GetAllPricesHistory} = require('../services/priceshistory.services')
 
 
