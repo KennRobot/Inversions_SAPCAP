@@ -35,7 +35,7 @@ http://localhost:3020/api/inv
 ## ENDPOINTS
 
 Endpoint | URL | Body | Use
----------|----------|---------
+---------|----------|---------|---------
 `GET`  |  http://localhost:3020/api/inv/GetAllUsers | none | Yes
 `GET`  |  http://localhost:3020/api/inv/GetAllSimulation | none | Yes
 `GET`  |  http://localhost:3020/api/inv/GetAllStrategies | none | Yes
