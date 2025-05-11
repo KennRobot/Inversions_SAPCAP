@@ -36,4 +36,48 @@ async function GetUserById(req) {
   }
 }
 
-module.exports = { GetAllUsers, GetUserById};
+//-----POST Users-----
+//Funcion del siguiente usuario
+async function getNextIdUser() {
+  const last = await usersSchema
+    .findOne({ idUser: /^user-/ })
+    .sort({ idUser: -1 })
+    .lean();
+  let num = 1;
+  if (last && last.idUser) {
+    const m = last.idUser.match(/user-(\d+)$/);
+    if (m) num = parseInt(m[1], 10) + 1;
+  }
+  return `user-${String(num).padStart(3, '0')}`;
+}
+//Funcion Post para crear un nuevo usuario
+async function CreateUser(req) {
+  const { name, email } = req.data;
+  if (!name || !email) {
+    const err = new Error('Faltan campos obligatorios: name y/o email');
+    err.status = 400;
+    throw err;
+  }
+
+  const idUser    = await getNextIdUser();
+  const createdAt = new Date();
+  const wallet    = { balance: 0, currency: 'USD', movements: [] };
+
+  const userDoc = { idUser, name, email, createdAt, wallet };
+  const user    = new usersSchema(userDoc);
+
+  try {
+    await user.save();
+    return user.toObject();
+  } catch (err) {
+    if (err.code === 11000) {
+      const dup = err.message.includes('email') ? 'email' : 'idUser';
+      const e2 = new Error(`Ya existe un usuario con ese ${dup}`);
+      e2.status = 409;
+      throw e2;
+    }
+    throw err;
+  }
+}
+
+module.exports = { GetAllUsers, GetUserById, CreateUser };

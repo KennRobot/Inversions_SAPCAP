@@ -1,10 +1,11 @@
 const cds = require('@sap/cds');
-const {GetAllUsers,GetUserById } = require('../services/users.services')
+const {GetAllUsers,GetUserById, CreateUser } = require('../services/users.services')
 const {GetAllStrategies, CreateIronCondorStrategy, GetStrategiesByUser} = require('../services/strategies.services')
 const {GetAllSimulation} = require('../services/simulacion.services')
 const {fetchHistoricalOptions} = require('../models/MongoDB/alphavantage')
 const { calculateIndicators } = require('../services/ironcondor');
 const {GetAllPricesHistory} = require('../services/priceshistory.services')
+
 
 module.exports = class InversionsClass extends cds.ApplicationService {
     async init() {
@@ -69,7 +70,21 @@ module.exports = class InversionsClass extends cds.ApplicationService {
                 return { message: 'Hubo un error al calcular los indicadores.' };
             }
         });
-        // Llamada al método init del servicio base de CAP
-        return await super.init();
-    }       
+        // Llamada al método init del servicio base de CAP 
+
+      // Handler para crear usuario:
+      this.on('CreateUser', async (req) => {
+        try {
+          const user = await CreateUser(req);
+          // CAP responde con status 201 automáticamente en actions
+          return user;
+        } catch (err) {
+          // errores custom con status
+          if (err.status)  return req.reject(err.status,  err.message);
+          return req.reject(500, err.message);
+        }
+      });
+  
+      return super.init();
+    }
 };
