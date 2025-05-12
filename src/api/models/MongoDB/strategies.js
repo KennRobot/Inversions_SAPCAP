@@ -17,13 +17,13 @@ const strategiesSchema = new mongoose.Schema({
             LONG_PUT:    { type: Number, required: true }
         }
     },
-    PREMIUM_COLLECTED:   { type: Number, required: true },
+    PREMIUM_COLLECTED:   { type: Number, required: true, default: 0 },
     RISK_INDICATORS_SNAPSHOT: {
-        VIX:           { type: Number, required: true },
-        RSI:           { type: Number, required: true },
-        PUT_CALL_RATIO:{ type: Number, required: true }
+        VIX:            { type: Number, required: true, default: 0 },
+        RSI:            { type: Number, required: true, default: 0 },
+        PUT_CALL_RATIO: { type: Number, required: true, default: 0 }
     },
-    NOTES:               { type: String }
+    NOTES:               { type: String, default: "" }
 });
 
 module.exports = mongoose.model(
