@@ -38,7 +38,7 @@ Endpoint | URL | Body | Finish | Creator | Description
 ---------|----------|---------|---------|---------|---------
 `GET`  |  /api/inv/GetAllUsers | none | Yes | Kennby| Todos los usuarios
 `GET`  |  /api/inv/GetUserById | {"USER_ID": "user-001"} | Yes| Kennby| Un solo  usuarios
-`POST`  |  /api/inv/CreateUser | {} | Yes| Jesus | Nuevo usuario
+`POST`  |  /api/inv/CreateUser | {"name": "nombre", "email": "correo"} | Yes| Jesus | Nuevo usuario
 
 ## ENDPOINTS Estrategias
 
