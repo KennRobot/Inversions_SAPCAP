@@ -1,4 +1,4 @@
-function calculateRSI(closes, period = 5) {//GENERALMENTE 14 DIAS 
+function calculateRSI(closes, period = 7) {//GENERALMENTE 14 DIAS 
   if (closes.length < period + 1) return null;
 
   let gains = 0;
