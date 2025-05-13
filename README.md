@@ -56,9 +56,9 @@ Endpoint | URL | Body | Finish | Creator | Description
 `GET`  |  /api/inv/GetAllSimulation | none | Yes| Kennby| Todas las simulaciones
 `GET`  |  /api/inv/GetAllPricesHistory | none | Yes| Kennby | Todos los precios historicos
 `POST` |  /api/inv/CalculateIndicators?symbol=AMZN&timeframe=6months&interval=1d | {"symbol":"AMZN","timeframe": "1months","interval": "6d", "indicators": ["RSI", "MACD"]} | Yes| Kennby | Mostrando Indicadores
-`POST`  |  /api/inv/simulation?strategy=ironcondor | none | Pedro/Jesus| Falta | comenzar la simulacion usando la estrategia seleccionada
+`POST`  |  /api/inv/simulation?strategy=ironcondor | none | no| Pedro/Jesus | comenzar la simulacion usando la estrategia seleccionada
 `GET`  |  /api/inv/getSimulation?id=1234 | {"USER_ID": "user-001"} | Yes| Kennby | solo las simulacion por usuario
-`PUT`  |  /api/inv/updatesimulation?id=12345 | none | Pedro| Falta | editar solo el nombre
-`DELETE`  |  /api/inv/deleteSimulation?id=12334 | none | Jesus| Falta | eliminar la simulacion
+`PUT`  |  /api/inv/updatesimulation?id=12345 | none | no| Pedro | editar solo el nombre
+`DELETE`  |  /api/inv/deleteSimulation?id=12334 | none | no| Jesus | eliminar la simulacion
 
 
