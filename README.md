@@ -34,18 +34,18 @@ http://localhost:3020/api/inv
 
 ## ENDPOINTS Usuarios
 
-Endpoint | URL | Body | Finish | Creator
----------|----------|---------|---------|---------
-`GET`  |  /api/inv/GetAllUsers | none | Yes | Kennby
-`GET`  |  /api/inv/GetUserById | {"USER_ID": "user-001"} | Yes| Kennby
-`POST`  |  /api/inv/CreateUser | {} | Yes| Jesus
+Endpoint | URL | Body | Finish | Creator | Description
+---------|----------|---------|---------|---------|---------
+`GET`  |  /api/inv/GetAllUsers | none | Yes | Kennby| Todos los usuarios
+`GET`  |  /api/inv/GetUserById | {"USER_ID": "user-001"} | Yes| Kennby| Un solo  usuarios
+`POST`  |  /api/inv/CreateUser | {} | Yes| Jesus | Nueco usuario
 
 ## ENDPOINTS Estrategias
 
-Endpoint | URL | Body | Finish | Creator
----------|----------|---------|---------|---------
-`GET`  |  /api/inv/GetAllStrategies | none | Yes| Kennby
-`POST` | /api/inv/CreateIronCondorStrategy | {"userId": "user-001", "type": "IronCondor","symbol":"AMZN", "startDate": "2025-05-01", "endDate": "2025-06-01", "legs": [ { "type": "Call","position": "Sell", "strike": 120 }, { "type": "Call", "position": "Buy", "strike": 125 }, { "type": "Put", "position": "Sell", "strike": 110 }, { "type": "Put", "position": "Buy", "strike": 105 }]} | Yes| Pedro
+Endpoint | URL | Body | Finish | Creator | Description
+---------|----------|---------|---------|---------|---------
+`GET`  |  /api/inv/GetAllStrategies | none | Yes| Kennby| Todos las estrategias
+`POST` | /api/inv/CreateIronCondorStrategy | {"userId": "user-001", "type": "IronCondor","symbol":"AMZN", "startDate": "2025-05-01", "endDate": "2025-06-01", "legs": [ { "type": "Call","position": "Sell", "strike": 120 }, { "type": "Call", "position": "Buy", "strike": 125 }, { "type": "Put", "position": "Sell", "strike": 110 }, { "type": "Put", "position": "Buy", "strike": 105 }]} | Yes| Pedro| Nueva estrategia
 
 
 
@@ -57,3 +57,4 @@ Endpoint | URL | Body | Finish | Creator
 `GET`  |  /api/inv/GetHistoricalOptions?symbol=AMZN | none | Yes | Kennby
 `GET`  |  /api/inv/GetAllPricesHistory | none | Yes| Kennby
 `POST` |  /api/inv/CalculateIndicators?symbol=AMZN&timeframe=6months&interval=1d | {"symbol":"AMZN","timeframe": "1months","interval": "6d", "indicators": ["RSI", "MACD"]} | Yes| Kennby
+`POST`  |  /api/inv/simulation?strategy=macrossover | none | No| Falta
