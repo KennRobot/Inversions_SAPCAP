@@ -53,9 +53,37 @@ service inversionsRoute @(path: '/api/inv') {
     @path            : 'GetAllSimulation'
     function GetAllSimulation()                                returns array of simulation;
 
-        @Core.Description: 'get-simulations-by-user'
+    @Core.Description: 'get-simulations-by-user'
     @path            : 'GetSimulatonByUserId'
     function GetSimulatonByUserId(USER_ID : String)                     returns simulation;
+
+    @Core.Description: 'Simula una estrategia Iron Condor'
+    @path: 'SimulateIronCondor'
+    action SimulateIronCondor(
+        symbol: String,
+        entryDate: Date,
+        expiryDate: Date,
+        shortCallStrike: Decimal(10,2),
+        longCallStrike: Decimal(10,2),
+        shortPutStrike: Decimal(10,2),
+        longPutStrike: Decimal(10,2),
+        idUser: String,
+        amount: Integer,             // Campo amount agregado
+        startDate: Date,             // Campo startDate agregado
+        endDate: Date,               // Campo endDate agregado
+        simulationName: String,      // Campo simulationName agregado
+        idStrategy: String           // Campo idStrategy agregado
+    ) returns {
+        signal: String;
+        netCredit: Decimal(10,2);
+        maxLoss: Decimal(10,2);
+        maxProfit: Decimal(10,2);
+        riskRewardRatio: Decimal(10,2);
+        percentageReturn: Decimal(5,2);
+        saved: Boolean;
+        simulationId: String;
+    };
+
 
     //****************** Nuevo: Obtener Opciones Históricas *******************************
     @Core.Description: 'Get Historical Options '

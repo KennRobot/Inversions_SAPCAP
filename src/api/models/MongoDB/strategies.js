@@ -26,7 +26,7 @@ const strategyCatalogSchema = new mongoose.Schema({
   }
 
 }, {
-  collection: 'strategies'
+  collection: 'STRATEGIES'
 });
 
-module.exports = mongoose.model('StrategyCatalog', strategyCatalogSchema);
+module.exports = mongoose.model('STRATEGIES', strategyCatalogSchema);

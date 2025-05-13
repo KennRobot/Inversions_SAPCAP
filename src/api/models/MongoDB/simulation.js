@@ -28,10 +28,19 @@ const simulationSchema = new mongoose.Schema({
   symbol:             { type: String, required: true },
   startDate:          { type: Date, required: true },
   endDate:            { type: Date, required: true },
-  amount:             { type: String, required: true }, // USD como string por consistencia
+  amount:             { type: Number, required: true }, // Cambiado a Number
   signals:            { type: [signalSchema], required: true },
   specs:              { type: String, required: false },
-  result:             { type: Number, required: false },
+  result:             { 
+    type: {
+      netCredit: { type: Number, required: true },
+      maxLoss: { type: Number, required: true },
+      maxProfit: { type: Number, required: true },
+      riskRewardRatio: { type: Number, required: true },
+      percentageReturn: { type: Number, required: true }
+    },
+    required: false 
+  },
   percentageReturn:   { type: Number, required: false },
   DETAIL_ROW:         { type: [detailRowSchema], required: true }
 });
