@@ -38,7 +38,7 @@ Endpoint | URL | Body | Finish | Creator | Description
 ---------|----------|---------|---------|---------|---------
 `GET`  |  /api/inv/GetAllUsers | none | Yes | Kennby| Todos los usuarios
 `GET`  |  /api/inv/GetUserById | {"USER_ID": "user-001"} | Yes| Kennby| Un solo  usuarios
-`POST`  |  /api/inv/CreateUser | {} | Yes| Jesus | Nueco usuario
+`POST`  |  /api/inv/CreateUser | {} | Yes| Jesus | Nuevo usuario
 
 ## ENDPOINTS Estrategias
 
@@ -51,10 +51,9 @@ Endpoint | URL | Body | Finish | Creator | Description
 
 ## ENDPOINTS Simulacion
 
-Endpoint | URL | Body | Finish | Creator
----------|----------|---------|---------|---------
-`GET`  |  /api/inv/GetAllSimulation | none | Yes| Kennby
-`GET`  |  /api/inv/GetHistoricalOptions?symbol=AMZN | none | Yes | Kennby
-`GET`  |  /api/inv/GetAllPricesHistory | none | Yes| Kennby
-`POST` |  /api/inv/CalculateIndicators?symbol=AMZN&timeframe=6months&interval=1d | {"symbol":"AMZN","timeframe": "1months","interval": "6d", "indicators": ["RSI", "MACD"]} | Yes| Kennby
-`POST`  |  /api/inv/simulation?strategy=macrossover | none | No| Falta
+Endpoint | URL | Body | Finish | Creator | Description
+---------|----------|---------|---------|---------|---------
+`GET`  |  /api/inv/GetAllSimulation | none | Yes| Kennby| Todas las simulaciones
+`GET`  |  /api/inv/GetAllPricesHistory | none | Yes| Kennby | Todos los precios historicos
+`POST` |  /api/inv/CalculateIndicators?symbol=AMZN&timeframe=6months&interval=1d | {"symbol":"AMZN","timeframe": "1months","interval": "6d", "indicators": ["RSI", "MACD"]} | Yes| Kennby | Mostrando Indicadores
+`POST`  |  /api/inv/simulation?strategy=macrossover | none | No| Falta | Se decido cual estategia usar
