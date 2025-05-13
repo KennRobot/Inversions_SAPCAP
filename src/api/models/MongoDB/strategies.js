@@ -1,33 +1,32 @@
 const mongoose = require('mongoose');
 
-const strategiesSchema = new mongoose.Schema({
-    STRATEGY_ID:         { type: String, required: true },
-    USER_ID:             { type: String, required: true },
-    TYPE:                { type: String, required: true }, // Ej: 'iron_condor'
-    UNDERLYING:          { type: String, required: true }, // Ej: 'SPY'
-    OPENED_AT:           { type: Date, required: true },
-    CLOSED_AT:           { type: Date, default: null },
-    POSITIONS: {
-        CALL_CREDIT_SPREAD: {
-            SHORT_CALL:  { type: Number, required: true },
-            LONG_CALL:   { type: Number, required: true }
-        },
-        PUT_CREDIT_SPREAD: {
-            SHORT_PUT:   { type: Number, required: true },
-            LONG_PUT:    { type: Number, required: true }
-        }
-    },
-    PREMIUM_COLLECTED:   { type: Number, required: true, default: 0 },
-    RISK_INDICATORS_SNAPSHOT: {
-        VIX:            { type: Number, required: true, default: 0 },
-        RSI:            { type: Number, required: true, default: 0 },
-        PUT_CALL_RATIO: { type: Number, required: true, default: 0 }
-    },
-    NOTES:               { type: String, default: "" }
+const strategyCatalogSchema = new mongoose.Schema({
+  COMPANYID: { type: Number, required: true },
+  CEDIID: { type: Number, required: true },
+  LABELID: { type: String, required: true },
+  VALUEPAID: { type: String, default: '' },
+  VALUEID: { type: String, required: true }, // Ej: 'IDIRON'
+  VALUE: { type: String, required: true },   // Ej: 'Iron Condor'
+  ALIAS: { type: String },
+  SEQUENCE: { type: Number },
+  IMAGE: { type: String },
+  DESCRIPTION: { type: String },
+
+  DETAIL_ROW: {
+    ACTIVED: { type: Boolean, default: true },
+    DELETED: { type: Boolean, default: false },
+    DETAIL_ROW_REG: [
+      {
+        CURRENT: { type: Boolean, default: true },
+        REGDATE: { type: Date },
+        REGTIME: { type: Date },
+        REGUSER: { type: String }
+      }
+    ]
+  }
+
+}, {
+  collection: 'strategies'
 });
 
-module.exports = mongoose.model(
-    'STRATEGIES',
-    strategiesSchema,
-    'STRATEGIES'
-);
+module.exports = mongoose.model('StrategyCatalog', strategyCatalogSchema);
