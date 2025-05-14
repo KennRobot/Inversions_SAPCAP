@@ -20,6 +20,15 @@ const signalSchema = new mongoose.Schema({
   reasoning:  { type: String, required: false }
 }, { _id: false });
 
+// NUEVO: esquema para las patas de una estrategia (Iron Condor, etc.)
+const legSchema = new mongoose.Schema({
+  strike:     { type: Number, required: true },
+  type:       { type: String, enum: ['call', 'put'], required: true },
+  side:       { type: String, enum: ['buy', 'sell'], required: true },
+  premium:    { type: Number, required: true },
+  expiration: { type: Date, required: false }
+}, { _id: false });
+
 const simulationSchema = new mongoose.Schema({
   idSimulation:       { type: String, required: true, unique: true },
   idUser:             { type: String, required: true },
@@ -28,20 +37,21 @@ const simulationSchema = new mongoose.Schema({
   symbol:             { type: String, required: true },
   startDate:          { type: Date, required: true },
   endDate:            { type: Date, required: true },
-  amount:             { type: Number, required: true }, // Cambiado a Number
+  amount:             { type: Number, required: true },
   signals:            { type: [signalSchema], required: true },
   specs:              { type: String, required: false },
   result:             { 
     type: {
-      netCredit: { type: Number, required: true },
-      maxLoss: { type: Number, required: true },
-      maxProfit: { type: Number, required: true },
-      riskRewardRatio: { type: Number, required: true },
-      percentageReturn: { type: Number, required: true }
+      netCredit:         { type: Number, required: true },
+      maxLoss:           { type: Number, required: true },
+      maxProfit:         { type: Number, required: true },
+      riskRewardRatio:   { type: Number, required: true },
+      percentageReturn:  { type: Number, required: true }
     },
     required: false 
   },
   percentageReturn:   { type: Number, required: false },
+  legs:               { type: [legSchema], required: false }, // 👈 NUEVO CAMPO
   DETAIL_ROW:         { type: [detailRowSchema], required: true }
 });
 

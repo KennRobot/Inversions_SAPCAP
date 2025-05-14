@@ -20,7 +20,7 @@ async function GetSimulatonByUserId(req) {
     }
 
     // Buscar el usuario por su ID en la base de datos
-    const user = await simulationSchema.findOne({ idUser: USER_ID }).lean();
+    const user = await simulationSchema.find({ idUser: USER_ID }).lean();
 
     // Si no se encuentra el usuario, lanzar un error
     if (!user) {
@@ -75,7 +75,7 @@ async function SimulateIronCondor(req) {
     const simulation = await simulationSchema.create({
       idSimulation: uuidv4(),
       idUser,
-      strategy: idStrategy,
+      idStrategy,
       symbol,
       entryDate,
       expiryDate,

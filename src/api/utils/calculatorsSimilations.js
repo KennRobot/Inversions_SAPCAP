@@ -15,9 +15,21 @@ async function calculateVolatility(symbol) {
 
     // Calcular los retornos logarítmicos
     const logReturns = [];
+
     for (let i = 1; i < closePrices.length; i++) {
-      const logReturn = Math.log(closePrices[i] / closePrices[i - 1]);
-      logReturns.push(logReturn);
+      const prev = closePrices[i - 1];
+      const current = closePrices[i];
+
+      if (
+        typeof prev === 'number' && !isNaN(prev) && prev > 0 &&
+        typeof current === 'number' && !isNaN(current) && current > 0
+      ) {
+        const logReturn = Math.log(current / prev);
+        logReturns.push(logReturn);
+
+        // Imprimir solo precios válidos usados en el cálculo
+        console.log(`Precios válidos en posición ${i}: prev=${prev}, current=${current}, logReturn=${logReturn}`);
+      }
     }
 
     // Calcular la desviación estándar de los retornos logarítmicos
