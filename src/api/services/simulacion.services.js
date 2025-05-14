@@ -20,23 +20,24 @@ async function GetSimulationsByUserId(req) {
       throw new Error("El ID de usuario no fue proporcionado.");
     }
 
-    // Buscar las simulaciones por el ID de usuario en la base de datos
-    const simulations = await simulationSchema.find({ idUser: USER_ID }).lean();
+    // Buscar todas las simulaciones del usuario por el ID en la base de datos
+    const simulations = await simulationSchema.find({ idUser: USER_ID }).lean(); 
 
-    // Si no se encuentran simulaciones, lanzar un error
+    // Verificar si no hay simulaciones
     if (!simulations || simulations.length === 0) {
       throw new Error(`No se encontraron simulaciones para el usuario con ID ${USER_ID}`);
     }
 
-    // Retornar las simulaciones encontradas
-    return simulations;
+    // Retornar todas las simulaciones encontradas
+    return {
+      simulations: simulations // Devuelve un objeto con las simulaciones
+    };
 
   } catch (error) {
     // Manejo de errores
     throw new Error(`Error al obtener las simulaciones del usuario: ${error.message}`);
   }
 }
-
 
 async function SimulateIronCondor(req) {
   try {
