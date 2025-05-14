@@ -28,7 +28,7 @@ async function calculateVolatility(symbol) {
         logReturns.push(logReturn);
 
         // Imprimir solo precios válidos usados en el cálculo
-        console.log(`Precios válidos en posición ${i}: prev=${prev}, current=${current}, logReturn=${logReturn}`);
+       // console.log(`Precios válidos en posición ${i}: prev=${prev}, current=${current}, logReturn=${logReturn}`);
       }
     }
 

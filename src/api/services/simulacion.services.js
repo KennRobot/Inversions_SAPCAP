@@ -1,6 +1,7 @@
 const simulationSchema = require('../models/MongoDB/simulation');
 const { v4: uuidv4 } = require('uuid');
 const { calculateOptionPremium, calculateVolatility, normalCDF } = require('../utils/calculatorsSimilations');
+const usersSchema = require('../models/MongoDB/users');
 
 async function GetAllSimulation(req) {
   try {
@@ -10,7 +11,7 @@ async function GetAllSimulation(req) {
     return error;
   }
 }
-async function GetSimulatonByUserId(req) {
+async function GetSimulationsByUserId(req) {
   try {
     // Obtener el USER_ID desde el cuerpo de la solicitud (req.data)
     const { USER_ID } = req.data; // Asumiendo que el body es { "USER_ID": "user-001" }
@@ -19,22 +20,23 @@ async function GetSimulatonByUserId(req) {
       throw new Error("El ID de usuario no fue proporcionado.");
     }
 
-    // Buscar el usuario por su ID en la base de datos
-    const user = await simulationSchema.find({ idUser: USER_ID }).lean();
+    // Buscar las simulaciones por el ID de usuario en la base de datos
+    const simulations = await simulationSchema.find({ idUser: USER_ID }).lean();
 
-    // Si no se encuentra el usuario, lanzar un error
-    if (!user) {
-      throw new Error(`No se encontró un usuario con el ID ${USER_ID}`);
+    // Si no se encuentran simulaciones, lanzar un error
+    if (!simulations || simulations.length === 0) {
+      throw new Error(`No se encontraron simulaciones para el usuario con ID ${USER_ID}`);
     }
 
-    // Retornar el usuario encontrado
-    return user;
+    // Retornar las simulaciones encontradas
+    return simulations;
 
   } catch (error) {
     // Manejo de errores
-    throw new Error(`Error al obtener el usuario por ID: ${error.message}`);
+    throw new Error(`Error al obtener las simulaciones del usuario: ${error.message}`);
   }
 }
+
 
 async function SimulateIronCondor(req) {
   try {
@@ -98,6 +100,9 @@ async function SimulateIronCondor(req) {
       }
     });
 
+    const profitOrLoss = (percentageReturn / 100) * amount;
+    const updatedBalance = await updateUserWallet(idUser, profitOrLoss);
+
     return {
       netCredit,
       maxLoss,
@@ -105,7 +110,8 @@ async function SimulateIronCondor(req) {
       riskRewardRatio,
       percentageReturn,
       saved: true,
-      simulationId: simulation.idSimulation
+      simulationId: simulation.idSimulation,
+      updatedBalance
     };
 
   } catch (error) {
@@ -114,5 +120,44 @@ async function SimulateIronCondor(req) {
   }
 }
 
+// Función para actualizar la wallet del usuario con el retorno de la simulación
+async function updateUserWallet(userId, profitOrLoss) {
+  try {
+    const user = await usersSchema.findOne({ idUser: userId }).lean();
+    if (!user) throw new Error('Usuario no encontrado');
 
-module.exports = { GetAllSimulation, GetSimulatonByUserId, SimulateIronCondor };
+    const newBalance = user.wallet.balance + profitOrLoss;
+
+    const movement = {
+      movementId: `mov-${Date.now()}`,
+      date: new Date(),
+      type: profitOrLoss >= 0 ? 'deposit' : 'loss',
+      amount: Math.abs(profitOrLoss),
+      description: 'Resultado de simulación'
+    };
+
+    await usersSchema.updateOne(
+      { idUser: userId },
+      {
+        $set: { 'wallet.balance': newBalance },
+        $push: { 'wallet.movements': movement }
+      }
+    );
+
+    return {
+      ...user,
+      wallet: {
+        ...user.wallet,
+        balance: newBalance,
+        movements: [...user.wallet.movements, movement]
+      }
+    };
+  } catch (error) {
+    console.error('Error al actualizar la wallet del usuario:', error);
+    throw new Error('Hubo un error al actualizar el saldo del usuario');
+  }
+}
+
+
+
+module.exports = { GetAllSimulation, GetSimulationsByUserId, SimulateIronCondor };
