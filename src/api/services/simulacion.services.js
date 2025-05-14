@@ -113,6 +113,11 @@ async function SimulateIronCondor(req) {
     throw new Error(`Error al simular estrategia Iron Condor: ${error.message}`);
   }
 }
+// Delete simulation by ID
+async function DeleteSimulationById(id) {
+  const deleted = await simulationSchema.deleteOne({ idSimulation: id });
+  if (deleted.deletedCount === 0) throw new Error('Simulación no encontrada');
+  return { idSimulation: id, status: 'deleted' };
+}
 
-
-module.exports = { GetAllSimulation, GetSimulatonByUserId, SimulateIronCondor };
+module.exports = { GetAllSimulation, GetSimulatonByUserId, SimulateIronCondor, DeleteSimulationById };

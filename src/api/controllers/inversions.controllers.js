@@ -1,7 +1,7 @@
 const cds = require('@sap/cds');
 const {GetAllUsers,GetUserById, CreateUser } = require('../services/users.services')
 const {GetAllStrategies, CreateIronCondorStrategy, GetStrategiesByUser} = require('../services/strategies.services')
-const {GetAllSimulation, GetSimulatonByUserId, SimulateIronCondor} = require('../services/simulacion.services')
+const {GetAllSimulation, GetSimulatonByUserId, SimulateIronCondor, DeleteSimulationById} = require('../services/simulacion.services')
 const {GetAllPricesHistory , calculateIndicators} = require('../services/priceshistory.services')
 
 
@@ -65,6 +65,13 @@ module.exports = class InversionsClass extends cds.ApplicationService {
           return req.reject(500, err.message);
         }
       });
+
+      // Handler para eliminar simulación por ID
+      this.on('DeleteSimulation', async (req) => {
+      const { id } = req.data;
+      if (!id) return req.reject(400, 'Falta el parámetro "id"');
+      return await DeleteSimulationById(id);
+    });
   
       return super.init();
     }
