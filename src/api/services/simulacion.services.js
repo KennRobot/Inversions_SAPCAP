@@ -62,6 +62,18 @@ async function SimulateIronCondor(req) {
       throw new Error('Faltan datos obligatorios para la simulación.');
     }
     
+    // Obtener usuario y validar saldo suficiente
+    const user = await usersSchema.findOne({ idUser }).lean();
+    if (!user) {
+      throw cds.error('Usuario no encontrado.', { code: 'USER_NOT_FOUND', status: 404 });
+    }
+
+    if (user.wallet.balance < amount) {
+      throw cds.error(
+        'Saldo insuficiente para realizar la simulación.',
+        { code: 'INSUFFICIENT_FUNDS', status: 400 }
+      );
+    }
 
     // Cálculo de primas
     const premiumShortCall = await calculateOptionPremium(symbol, shortCallStrike, 'call', 'sell');
