@@ -34,8 +34,8 @@ module.exports = class InversionsClass extends cds.ApplicationService {
             return await GetAllSimulation(req);
         })
         // Evento para obtener las simulaciones de un usuario
-        this.on('GetSimulatonByUserId', async (req) => {
-            return await GetSimulatonByUserId(req);
+        this.on('GetSimulationsByUserId', async (req) => {
+            return await GetSimulationsByUserId(req);
         });
         // Evento para simular estrategia Iron Condor
         this.on('SimulateIronCondor', async (req) => {

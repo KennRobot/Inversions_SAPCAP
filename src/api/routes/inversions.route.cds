@@ -53,6 +53,9 @@
         @path            : 'GetAllSimulation'
         function GetAllSimulation()                                returns array of simulation;
 
+    @Core.Description: 'get-simulations-by-user'
+    @path            : 'GetSimulationsByUserId'
+    function GetSimulationsByUserId(USER_ID : String)                     returns simulation;
         @Core.Description: 'get-simulations-by-user'
         @path            : 'GetSimulatonByUserId'
         function GetSimulatonByUserId(USER_ID : String)                     returns simulation;
