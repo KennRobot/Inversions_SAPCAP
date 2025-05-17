@@ -58,7 +58,7 @@ Endpoint | URL | Body | Finish | Creator | Description
 `POST` |  /api/inv/CalculateIndicators?symbol=AMZN&timeframe=6months&interval=1d | {"symbol":"AMZN","timeframe": "1months","interval": "6d", "indicators": ["RSI", "MACD"]} | Yes| Kennby | Mostrando Indicadores
 `POST`  |  /api/inv/SimulateIronCondor | {"symbol": "AMZN","entryDate": "2025-05-15","expiryDate": "2025-06-15","shortCallStrike": 110,"longCallStrike": 115,"shortPutStrike": 90,"longPutStrike": 85,"idUser": "user-002","amount": 10000,"startDate": "2025-05-15", "endDate":"2025-06-15","simulationName": "Iron Condor AMZN", "idStrategy": "IronCondor"  }" | Yes | Pedro/Jesus | comenzar la simulacion usando la estrategia seleccionada
 `GET`  |  /api/inv/getSimulation?id=1234 | {"USER_ID": "user-001"} | Yes| Kennby | solo las simulacion por usuario
-`PUT`  |  /api/inv/updatesimulation?id=12345 | none | no| Pedro | editar solo el nombre
+`POST`  |  /api/inv/UpdateSimulationName | {"idSimulation": "APPL_2023-03-15","newName": "Iron condor v2"} | YES| Pedro | editar solo el nombre
 `PUT`  |  /api/inv/DeleteSimulation | {"id": "4e92de0e-aacf-463e-bb20-f40e8c3cf007"}| YES | Jesus | eliminar la simulacion
 
 
