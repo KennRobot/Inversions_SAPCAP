@@ -132,6 +132,41 @@ async function SimulateIronCondor(req) {
     throw new Error(`Error al simular estrategia Iron Condor: ${error.message}`);
   }
 }
+// Función para actualizar el nombre de la simulación
+async function UpdateSimulationName(req) {
+  try {
+    const { idSimulation, newName } = req.data;
+
+    // Validación de entrada
+    if (!idSimulation || !newName) {
+      throw new Error('Se requiere el ID de la simulación y el nuevo nombre.');
+    }
+
+    // Verificar que exista la simulación
+    const simulation = await simulationSchema.findOne({ idSimulation }).lean();
+    if (!simulation) {
+      throw new Error(`Simulación con ID ${idSimulation} no encontrada.`);
+    }
+
+    // Actualizar el nombre de la simulación
+    await simulationSchema.updateOne(
+      { idSimulation },
+      { $set: { simulationName: newName } }
+    );
+
+    return {
+      success: true,
+      message: `Nombre de la simulación actualizado a "${newName}".`,
+      idSimulation,
+      newName
+    };
+
+  } catch (error) {
+    console.error('Error en UpdateSimulationName:', error);
+    throw new Error(`Error al actualizar el nombre de la simulación: ${error.message}`);
+  }
+}
+
 // Delete simulation by ID
 async function DeleteSimulationById(id) {
   const deleted = await simulationSchema.deleteOne({ idSimulation: id });
@@ -139,7 +174,9 @@ async function DeleteSimulationById(id) {
   return { idSimulation: id, status: 'deleted' };
 }
 
-module.exports = { GetAllSimulation, GetSimulatonByUserId, SimulateIronCondor, DeleteSimulationById };
+
+module.exports = { GetAllSimulation, GetSimulationsByUserId, SimulateIronCondor, UpdateSimulationName, DeleteSimulationById };
+
 
 // Función para actualizar la wallet del usuario con el retorno de la simulación
 async function updateUserWallet(userId, profitOrLoss) {
@@ -181,4 +218,4 @@ async function updateUserWallet(userId, profitOrLoss) {
 
 
 
-module.exports = { GetAllSimulation, GetSimulationsByUserId, SimulateIronCondor };
+module.exports = { GetAllSimulation, GetSimulationsByUserId, SimulateIronCondor, UpdateSimulationName, DeleteSimulationById };
