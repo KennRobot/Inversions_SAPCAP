@@ -27,15 +27,60 @@ File or Folder api | Purpose
 `routes/` | your routes of the project
 `services/` | your servicies of project
 
+## ¿Qué es la estrategia Iron Condor?
+Es una estrategia de opciones que combina:
+
+Venta de una call a un strike alto (shortCallStrike)
+
+Compra de una call a un strike aún más alto (longCallStrike)
+
+Venta de una put a un strike bajo (shortPutStrike)
+
+Compra de una put a un strike aún más bajo (longPutStrike)
+
+Esto crea un rango donde se espera que el precio del activo termine (entre shortPutStrike y shortCallStrike). Las opciones compradas (longCallStrike y longPutStrike) limitan las pérdidas si el precio se mueve fuera del rango.
+
+##Campos y su función
+* symbol: "AMZN": El símbolo del activo subyacente, en este caso Amazon. Define sobre qué acción o activo se hace la estrategia.
+
+* entryDate: "2025-05-15": Fecha en la que se inicia la simulación o la posición.
+
+*expiryDate: "2025-06-15": Fecha de expiración de las opciones usadas en la estrategia. Todas las opciones que uses deben expirar en esta fecha.
+
+*shortCallStrike: 60: Precio de ejercicio (strike) de la opción call que vas a vender (short). Generalmente es un precio más alto que el precio actual del activo.
+
+*longCallStrike: 59: Precio de ejercicio de la opción call que vas a comprar (long). Normalmente debe ser mayor que el shortCallStrike para limitar la pérdida (por eso suele estar por encima del strike shortCall). Pero aquí está en 59 que es menor que 60, lo cual es un error. Debe cumplir:
+longCallStrike > shortCallStrike
+
+*shortPutStrike: 58: Precio de ejercicio de la opción put que vas a vender (short). Generalmente es un precio más bajo que el precio actual del activo.
+
+*longPutStrike: 56: Precio de ejercicio de la opción put que vas a comprar (long). Debe ser menor que el shortPutStrike para limitar la pérdida. Debe cumplir:
+longPutStrike < shortPutStrike
+
+* idUser: "user-001": Identificador del usuario que hace la simulación.
+
+*amount: 1000: Monto de dinero que el usuario está dispuesto a usar en la simulación.
+
+* startDate: "2025-05-15": Fecha de inicio para evaluar la simulación (similar a entryDate).
+
+* endDate: "2025-06-15": Fecha final para evaluar la simulación (similar a expiryDate).
+
+* simulationName: "Iron Condor AMZN": Nombre descriptivo para identificar la simulación.
+
+* idStrategy: "IronCondor":Tipo de estrategia a simular (en este caso Iron Condor).
+
 ## Indicadores y cálculos que se están usando
 ### Volatilidad Histórica
+``` Function calculateRSI ```
+
 Se calcula a partir de los retornos logarítmicos diarios de los precios de cierre (last) del activo.
 
-Fórmula usada:```Volatilidad = 𝜎 log returns × 252 ```
+Fórmula usada: ```Volatilidad = 𝜎 log returns × 252 ```
 
 Se usa como insumo clave para calcular primas de opciones en la estrategia Iron Condor.
 
 ###  Cálculo de Prima de Opciones
+``` function calculateOptionPremium```
 
 Utiliza una versión simplificada del modelo Black-Scholes para calcular el precio teórico de opciones tipo Call y Put (Compra y Venta).
 
@@ -49,6 +94,7 @@ Factores considerados:
 
 ### RSI (Índice de Fuerza Relativa)
 ``` Function calculateRSI ```
+
 Mide la magnitud de ganancias recientes frente a pérdidas recientes en un período.
 
 Se calcula con el período de 7 días (ajustable).
@@ -56,6 +102,7 @@ Se calcula con el período de 7 días (ajustable).
 Fórmula:
 
 ### VIX Simulado
+
 ``` Function calculateVolatility ```
 
 Se calcula como la volatilidad histórica anualizada del activo, expresada como porcentaje. Aunque no representa la volatilidad implícita de las opciones, actúa como una buena aproximación del riesgo de mercado percibido, especialmente útil cuando no se dispone de datos de opciones reales.
