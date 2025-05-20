@@ -1,4 +1,4 @@
-# Getting Started
+# INVERSIONS
 
 Welcome to your new project for class NoSQL.
 
@@ -46,6 +46,15 @@ Factores considerados:
 * Volatilidad histórica
 * Tasa libre de riesgo (5%)
 * Tiempo hasta la expiración (30 días)
+
+### RSI (Índice de Fuerza Relativa)
+Mide la magnitud de ganancias recientes frente a pérdidas recientes en un período.
+
+Se calcula con el período de 7 días (ajustable).
+
+Fórmula:
+
+
 
 ## URL
 

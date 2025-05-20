@@ -1,6 +1,6 @@
 const simulationSchema = require('../models/MongoDB/simulation');
 const { v4: uuidv4 } = require('uuid');
-const { calculateOptionPremium, calculateVolatility, normalCDF } = require('../utils/calculatorsSimilations');
+const { calculateOptionPremium, calculateVolatility, normalCDF } = require('../utils/calculatorsSimulations');
 const usersSchema = require('../models/MongoDB/users');
 
 async function GetAllSimulation(req) {
