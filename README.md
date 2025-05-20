@@ -59,7 +59,7 @@ longPutStrike < shortPutStrike
 
 ## Indicadores y cálculos que se están usando
 ### Volatilidad Histórica
-``` Function calculateRSI ```
+``` File calculatorsSimulations ```
 
 Se calcula a partir de los retornos logarítmicos diarios de los precios de cierre (last) del activo.
 
@@ -94,7 +94,6 @@ Fórmula:
 ``` Function calculateVolatility ```
 
 Se calcula como la volatilidad histórica anualizada del activo, expresada como porcentaje. Aunque no representa la volatilidad implícita de las opciones, actúa como una buena aproximación del riesgo de mercado percibido, especialmente útil cuando no se dispone de datos de opciones reales.
-
 
 
 
