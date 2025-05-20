@@ -28,7 +28,7 @@ async function calculateVolatility(symbol) {
         logReturns.push(logReturn);
 
         // Imprimir solo precios válidos usados en el cálculo
-       // console.log(`Precios válidos en posición ${i}: prev=${prev}, current=${current}, logReturn=${logReturn}`);
+       //console.log(`Precios válidos en posición ${i}: prev=${prev}, current=${current}, logReturn=${logReturn}`);
       }
     }
 
@@ -73,12 +73,21 @@ async function calculateOptionPremium(symbol, strike, type, side) {
 
 // Obtener el precio más reciente del símbolo desde la colección de historial de precios
 async function getCurrentPrice(symbol) {
-  const latest = await priceHistorySchema.findOne({ symbol }).sort({ date: -1 }).lean();
-  if (!latest || !latest.last) {
+  const latest = await priceHistorySchema.findOne({symbol: symbol,
+    last: { $gt: 0 }
+  }).sort({ date: -1 });
+
+
+  //console.log('Precio encontrado para', symbol, ':', latest); // <== Añade esto
+
+
+  if (!latest || typeof latest.last !== 'number') {
     throw new Error(`No se pudo encontrar el precio actual para el símbolo ${symbol}`);
   }
-  return latest.last; // o usa 'close' si tu campo se llama así
+
+  return latest.last;
 }
+
 
 // Función de distribución acumulativa de la normal estándar
 function normalCDF(x) {

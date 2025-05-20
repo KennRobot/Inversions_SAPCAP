@@ -174,7 +174,6 @@ async function DeleteSimulationById(id) {
   return { idSimulation: id, status: 'deleted' };
 }
 
-
 // Función para actualizar la wallet del usuario con el retorno de la simulación
 async function updateUserWallet(userId, profitOrLoss) {
   try {
