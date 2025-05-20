@@ -40,7 +40,7 @@ Compra de una put a un strike aún más bajo (longPutStrike)
 
 Esto crea un rango donde se espera que el precio del activo termine (entre shortPutStrike y shortCallStrike). Las opciones compradas (longCallStrike y longPutStrike) limitan las pérdidas si el precio se mueve fuera del rango.
 
-![Screenshot of a comment on a GitHub issue showing an image, added in the Markdown, of an Octocat smiling and raising a tentacle.](https://myoctocat.com/assets/images/base-octocat.svg)
+![IRON CONDOR]([https://myoctocat.com/assets/images/base-octocat.svg](https://blog.ibroker.it/wp-content/uploads/2022/08/Iron-Condor-Options-Trading-Example-1.jpg))
 
 ## Campos y su función
 * symbol: "AMZN": El símbolo del activo subyacente, en este caso Amazon. Define sobre qué acción o activo se hace la estrategia.
