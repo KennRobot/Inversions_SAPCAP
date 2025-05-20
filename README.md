@@ -44,14 +44,14 @@ Esto crea un rango donde se espera que el precio del activo termine (entre short
 * symbol: "AMZN": El símbolo del activo subyacente, en este caso Amazon. Define sobre qué acción o activo se hace la estrategia.
 * entryDate: "2025-05-15": Fecha en la que se inicia la simulación o la posición.
 * expiryDate: "2025-06-15": Fecha de expiración de las opciones usadas en la estrategia. Todas las opciones que uses deben expirar en esta fecha.
-* shortCallStrike: 60: Precio de ejercicio (strike) de la opción call que vas a vender (short). Generalmente es un precio más alto que el precio actual del activo.
-* longCallStrike: 59: Precio de ejercicio de la opción call que vas a comprar (long). Normalmente debe ser mayor que el shortCallStrike para limitar la pérdida (por eso suele estar por encima del strike shortCall). Pero aquí está en 59 que es menor que 60, lo cual es un error. Debe cumplir:
+* shortCallStrike: Precio de ejercicio (strike) de la opción call que vas a vender (short). Generalmente es un precio más alto que el precio actual del activo.
+* longCallStrike: Precio de ejercicio de la opción call que vas a comprar (long). Normalmente debe ser mayor que el shortCallStrike para limitar la pérdida (por eso suele estar por encima del strike shortCall). Pero aquí está en 59 que es menor que 60, lo cual es un error. Debe cumplir:
 longCallStrike > shortCallStrike
-* shortPutStrike: 58: Precio de ejercicio de la opción put que vas a vender (short). Generalmente es un precio más bajo que el precio actual del activo.
-* longPutStrike: 56: Precio de ejercicio de la opción put que vas a comprar (long). Debe ser menor que el shortPutStrike para limitar la pérdida. Debe cumplir:
+* shortPutStrike: Precio de ejercicio de la opción put que vas a vender (short). Generalmente es un precio más bajo que el precio actual del activo.
+* longPutStrike: Precio de ejercicio de la opción put que vas a comprar (long). Debe ser menor que el shortPutStrike para limitar la pérdida. Debe cumplir:
 longPutStrike < shortPutStrike
 * idUser: "user-001": Identificador del usuario que hace la simulación.
-* amount: 1000: Monto de dinero que el usuario está dispuesto a usar en la simulación.
+* amount: Monto de dinero que el usuario está dispuesto a usar en la simulación.
 * startDate: "2025-05-15": Fecha de inicio para evaluar la simulación (similar a entryDate).
 * endDate: "2025-06-15": Fecha final para evaluar la simulación (similar a expiryDate).
 * simulationName: "Iron Condor AMZN": Nombre descriptivo para identificar la simulación.
