@@ -175,9 +175,6 @@ async function DeleteSimulationById(id) {
 }
 
 
-module.exports = { GetAllSimulation, GetSimulationsByUserId, SimulateIronCondor, UpdateSimulationName, DeleteSimulationById };
-
-
 // Función para actualizar la wallet del usuario con el retorno de la simulación
 async function updateUserWallet(userId, profitOrLoss) {
   try {
@@ -215,7 +212,6 @@ async function updateUserWallet(userId, profitOrLoss) {
     throw new Error('Hubo un error al actualizar el saldo del usuario');
   }
 }
-
 
 
 module.exports = { GetAllSimulation, GetSimulationsByUserId, SimulateIronCondor, UpdateSimulationName, DeleteSimulationById };
