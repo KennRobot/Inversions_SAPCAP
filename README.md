@@ -41,12 +41,11 @@ Utiliza una versión simplificada del modelo Black-Scholes para calcular el prec
 
 Factores considerados:
 
-*Precio actual del activo (getCurrentPrice)
-
-*Strike price
-*Volatilidad histórica
--Tasa libre de riesgo (5%)
--Tiempo hasta la expiración (30 días)
+* Precio actual del activo (getCurrentPrice)
+* Strike price
+* Volatilidad histórica
+* Tasa libre de riesgo (5%)
+* Tiempo hasta la expiración (30 días)
 
 ## URL
 
