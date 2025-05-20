@@ -27,6 +27,12 @@ File or Folder api | Purpose
 `routes/` | your routes of the project
 `services/` | your servicies of project
 
+## Indicadores y cálculos que se están usando
+### Volatilidad Histórica
+Se calcula a partir de los retornos logarítmicos diarios de los precios de cierre (last) del activo.
+Fórmula usada:```Volatilidad = 𝜎 log returns × 252 ```
+Se usa como insumo clave para calcular primas de opciones en la estrategia Iron Condor.
+
 
 ## URL
 
