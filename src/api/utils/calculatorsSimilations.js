@@ -2,6 +2,7 @@ const priceHistorySchema = require('../models/MongoDB/prices_history');
 const math = require('mathjs');
 
 // Calcular la volatilidad histórica utilizando los precios de cierre
+//INDICADOR VIX
 async function calculateVolatility(symbol) {
   try {
     const data = await priceHistorySchema.find({ symbol }).sort({ date: 1 }).lean();
