@@ -30,9 +30,26 @@ File or Folder api | Purpose
 ## Indicadores y cálculos que se están usando
 ### Volatilidad Histórica
 Se calcula a partir de los retornos logarítmicos diarios de los precios de cierre (last) del activo.
+
 Fórmula usada:```Volatilidad = 𝜎 log returns × 252 ```
+
 Se usa como insumo clave para calcular primas de opciones en la estrategia Iron Condor.
 
+###  Cálculo de Prima de Opciones
+
+Utiliza una versión simplificada del modelo Black-Scholes para calcular el precio teórico de opciones tipo Call y Put (Compra y Venta).
+
+Factores considerados:
+
+-Precio actual del activo (getCurrentPrice)
+
+-Strike price
+
+-Volatilidad histórica
+
+-Tasa libre de riesgo (5%)
+
+-Tiempo hasta la expiración (30 días)
 
 ## URL
 
