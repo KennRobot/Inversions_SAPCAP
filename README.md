@@ -48,11 +48,19 @@ Factores considerados:
 * Tiempo hasta la expiración (30 días)
 
 ### RSI (Índice de Fuerza Relativa)
+``` Function calculateRSI ```
 Mide la magnitud de ganancias recientes frente a pérdidas recientes en un período.
 
 Se calcula con el período de 7 días (ajustable).
 
 Fórmula:
+
+### VIX Simulado
+``` Function calculateVolatility ```
+
+Se calcula como la volatilidad histórica anualizada del activo, expresada como porcentaje. Aunque no representa la volatilidad implícita de las opciones, actúa como una buena aproximación del riesgo de mercado percibido, especialmente útil cuando no se dispone de datos de opciones reales.
+
+
 
 
 
