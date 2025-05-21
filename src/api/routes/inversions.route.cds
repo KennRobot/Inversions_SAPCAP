@@ -35,6 +35,29 @@
             country      : String(100)
         ) returns users;
 
+        @Core.Description: 'Update-one-user'
+        @path            : 'UpdateUser'
+        action UpdateUser(
+            USER_ID: String,
+            name         : String(100),
+            lastName     : String(100),
+            birthDate    : String(20),
+            alias        : String(100),
+            email        : String(255),
+            phoneNumber  : String(20),
+            departament  : String(100),
+            street       : String(255),
+            postalCode   : Integer,
+            city         : String(100),
+            state        : String(100),
+            country      : String(100),
+            wallet: {
+            balance: Decimal(15,2);
+            currency: String;
+            }
+        ) returns users;
+
+
         //****************** Strategies *******************************
         @Core.Description: 'get-all-strategies'
         @path            : 'GetAllStrategies'
