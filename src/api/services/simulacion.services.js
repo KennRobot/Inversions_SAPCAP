@@ -39,6 +39,23 @@ async function GetSimulationsByUserId(req) {
   }
 }
 
+async function GetSimulationBySymbols(req){
+  try {
+    const { symbol } = req.data;
+    const simulation = await simulationSchema.find({ symbol }).lean();
+
+    if (!simulation || simulation.length === 0) {
+      throw new Error(`No se encontraron simulaciones con el simbolo de ${symbol}`);
+    }
+
+    return {
+      simulation: simulation
+    };
+  } catch (error) {
+    return error;
+  }
+}
+
 async function SimulateIronCondor(req) {
   try {
     const {
@@ -114,7 +131,7 @@ async function SimulateIronCondor(req) {
     });
 
     const profitOrLoss = (percentageReturn / 100) * amount;
-    const updatedBalance = await updateUserWallet(idUser, profitOrLoss);
+    const updatedBalance = await updateUserWallet(idUser, profitOrLoss, symbol);
 
     return {
       netCredit,
@@ -175,7 +192,7 @@ async function DeleteSimulationById(id) {
 }
 
 // Función para actualizar la wallet del usuario con el retorno de la simulación
-async function updateUserWallet(userId, profitOrLoss) {
+async function updateUserWallet(userId, profitOrLoss, symbol) {
   try {
     const user = await usersSchema.findOne({ idUser: userId }).lean();
     if (!user) throw new Error('Usuario no encontrado');
@@ -187,7 +204,7 @@ async function updateUserWallet(userId, profitOrLoss) {
       date: new Date(),
       type: profitOrLoss >= 0 ? 'deposit' : 'loss',
       amount: Math.abs(profitOrLoss),
-      description: 'Resultado de simulación'
+      description: 'Resultado de simulación Iron Condor con acciones de ' + symbol
     };
 
     await usersSchema.updateOne(
@@ -213,4 +230,4 @@ async function updateUserWallet(userId, profitOrLoss) {
 }
 
 
-module.exports = { GetAllSimulation, GetSimulationsByUserId, SimulateIronCondor, UpdateSimulationName, DeleteSimulationById };
+module.exports = { GetAllSimulation, GetSimulationsByUserId, SimulateIronCondor, UpdateSimulationName, DeleteSimulationById, GetSimulationBySymbols };
