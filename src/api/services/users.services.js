@@ -52,19 +52,51 @@ async function getNextIdUser() {
 }
 //Funcion Post para crear un nuevo usuario
 async function CreateUser(req) {
-  const { name, email } = req.data;
-  if (!name || !email) {
-    const err = new Error('Faltan campos obligatorios: name y/o email');
+  const {
+    name,
+    lastName,
+    birthDate,
+    alias,
+    email,
+    phoneNumber,
+    departament,
+    street,
+    postalCode,
+    city,
+    state,
+    country
+  } = req.data;
+
+  // Validaciones mínimas requeridas 
+  if (!name || !email || !lastName || !birthDate || !alias || !phoneNumber || !departament || !street || !postalCode || !city || !state || !country) {
+    const err = new Error('Faltan campos obligatorios en el cuerpo de la solicitud');
     err.status = 400;
     throw err;
   }
 
-  const idUser    = await getNextIdUser();
+  const idUser = await getNextIdUser();
   const createdAt = new Date();
-  const wallet    = { balance: 0, currency: 'USD', movements: [] };
+  const wallet = { balance: 0, currency: 'USD', movements: [] };
 
-  const userDoc = { idUser, name, email, createdAt, wallet };
-  const user    = new usersSchema(userDoc);
+  const userDoc = {
+    idUser,
+    name,
+    lastName,
+    birthDate,
+    alias,
+    email,
+    phoneNumber,
+    departament,
+    street,
+    postalCode,
+    city,
+    state,
+    country,
+    createdAt,
+    wallet
+  };
+
+  const user = new usersSchema(userDoc);
 
   try {
     await user.save();

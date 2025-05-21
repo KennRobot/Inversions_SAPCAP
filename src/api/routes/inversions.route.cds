@@ -17,11 +17,23 @@
         @path            : 'GetUserById'
         function GetUserById(USER_ID : String)                     returns users;
 
-        @Core.Description: 'create new user'
+        //Crear un nuevo usuario
+        @Core.Description: 'Create a new user'
         @path            : 'CreateUser'
-        action   CreateUser(name : String,
-                            email : String)                        
-                            returns users;
+        action CreateUser(
+            name         : String(100),
+            lastName     : String(100),
+            birthDate    : String(20),
+            alias        : String(100),
+            email        : String(255),
+            phoneNumber  : String(20),
+            departament  : String(100),
+            street       : String(255),
+            postalCode   : Integer,
+            city         : String(100),
+            state        : String(100),
+            country      : String(100)
+        ) returns users;
 
         //****************** Strategies *******************************
         @Core.Description: 'get-all-strategies'

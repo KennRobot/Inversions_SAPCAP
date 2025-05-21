@@ -33,9 +33,19 @@ entity strategies {
 
 //*************************USUARIOS ************************ */
 entity Users {
-  key idUser    : String(36);         //"user-001"
-      name      : String(100);
-      email     : String(255);
+  key idUser       : String(36);         // UUID o identificador único
+      name         : String(100);
+      lastName     : String(100);
+      birthDate    : String(25);
+      alias        : String(100);
+      email        : String(255);
+      phoneNumber  : String(20);
+      departament  : String(100);
+      street       : String(200);
+      postalCode   : Integer;
+      city         : String(100);
+      state        : String(100);
+      country      : String(100);
       createdAt : Timestamp;
       wallet    : Association to one Wallet;
 }

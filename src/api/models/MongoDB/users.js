@@ -1,3 +1,4 @@
+const { stat } = require('@sap/cds/lib/utils/cds-utils');
 const mongoose = require('mongoose');
 
 const movementSchema = new mongoose.Schema({
@@ -21,7 +22,17 @@ const walletSchema = new mongoose.Schema({
 const usersSchema = new mongoose.Schema({
   idUser: { type: String, required: true, unique: true },
   name: { type: String, required: true },
+  lastName: { type: String, required: true },
+  birthDate: { type: String, required: true },
+  alias: { type: String, required: true },
   email: { type: String, required: true },
+  phoneNumber: { type: String, required: true },
+  departament: { type: String, required: true },
+  street: { type: String, required: true },
+  postalCode: { type: Number, required: true },
+  city: { type: String, required: true },
+  state: { type: String, required: true },
+  country: { type: String, required: true },
   createdAt: { type: Date, required: true },
   wallet: { type: walletSchema, required: true }
 });
