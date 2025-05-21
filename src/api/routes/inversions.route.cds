@@ -75,11 +75,15 @@
 
         @Core.Description: 'get-simulations-for-range-amount'
         @path            : 'GetSimulationForMonto'
-        function GetSimulationForMonto(min: Integer, max: Integer)                     returns simulation;
+        function GetSimulationForMonto(min: Integer, max: Integer)           returns simulation;
        
         @Core.Description: 'get-simulations-by-user'
         @path            : 'GetSimulatonByUserId'
         function GetSimulatonByUserId(USER_ID : String)                     returns simulation;
+
+        @Core.Description: 'get-simulations-for-range-date'
+        @path            : 'GetSimulationsForRangeDate'
+        function GetSimulationsForRangeDate(startDate: Date, endDate: Date )                     returns simulation;
 
         @Core.Description: 'Simula una estrategia Iron Condor'
         @path: 'SimulateIronCondor'

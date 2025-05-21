@@ -129,6 +129,7 @@ Endpoint | URL | Body | Finish | Creator | Description
 `GET`  |  /api/inv/GetAllPricesHistory | none | Yes| Kennby | Todos los precios historicos
 `GET`  |  /api/inv/GetSimulationBySymbols | {"symbol": "AMZN"} | Yes| Kennby | Todas las simulaciones con filtro de simbolo de la acciones
 `GET`  |  /api/inv/GetSimulationForMonto | {"min": 1000,"max": 2000} | Yes| Kennby | Todas las simulaciones con un rango de capital invertido
+`GET`  |  /api/inv/GetSimulationsForRangeDate | {"startDate": "2025-05-01","endDate": "2025-06-30"} | Yes| Kennby | Todas las simulaciones con un rango fechas
 `POST` |  /api/inv/CalculateIndicators?symbol=AMZN&timeframe=6months&interval=1d | {"symbol":"AMZN","timeframe": "1months","interval": "6d", "indicators": ["RSI", "MACD"]} | Yes| Kennby | Mostrando Indicadores
 `POST`  |  /api/inv/SimulateIronCondor | {"symbol": "AMZN","entryDate": "2025-05-15","expiryDate": "2025-06-15","shortCallStrike": 110,"longCallStrike": 115,"shortPutStrike": 90,"longPutStrike": 85,"idUser": "user-002","amount": 10000,"startDate": "2025-05-15", "endDate":"2025-06-15","simulationName": "Iron Condor AMZN", "idStrategy": "IronCondor"  }" | Yes | Pedro/Jesus | comenzar la simulacion usando la estrategia seleccionada
 `GET`  |  /api/inv/getSimulation?id=1234 | {"USER_ID": "user-001"} | Yes| Kennby | solo las simulacion por usuario
