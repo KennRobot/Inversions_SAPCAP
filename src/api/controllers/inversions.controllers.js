@@ -1,7 +1,7 @@
 const cds = require('@sap/cds');
 const {GetAllUsers,GetUserById, CreateUser } = require('../services/users.services')
 const {GetAllStrategies, CreateIronCondorStrategy, GetStrategiesByUser} = require('../services/strategies.services')
-const {GetAllSimulation, GetSimulationsByUserId, SimulateIronCondor, UpdateSimulationName, DeleteSimulationById, GetSimulationBySymbols} = require('../services/simulacion.services')
+const {GetAllSimulation, GetSimulationsByUserId, SimulateIronCondor, UpdateSimulationName, DeleteSimulationById, GetSimulationBySymbols, GetSimulationForMonto} = require('../services/simulacion.services')
 const {GetAllPricesHistory , calculateIndicators} = require('../services/priceshistory.services')
 
 
@@ -37,9 +37,13 @@ module.exports = class InversionsClass extends cds.ApplicationService {
         this.on('GetSimulationsByUserId', async (req) => {
             return await GetSimulationsByUserId(req);
         });
-        // Evento para obtener las simulaciones de un usuario
+        // Evento para obtener las simulaciones de un simbolo/acciones
         this.on('GetSimulationBySymbols', async (req) => {
             return await GetSimulationBySymbols(req);
+        });
+        // Evento para obtener las simulaciones de un rango de dinero invertido
+        this.on('GetSimulationForMonto', async (req) => {
+            return await GetSimulationForMonto(req);
         });
         // Evento para simular estrategia Iron Condor
         this.on('SimulateIronCondor', async (req) => {

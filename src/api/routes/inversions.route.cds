@@ -72,6 +72,10 @@
         @Core.Description: 'get-simulations-by-symbols'
         @path            : 'GetSimulationBySymbols'
         function GetSimulationBySymbols(symbol : String)                     returns simulation;
+
+        @Core.Description: 'get-simulations-for-range-amount'
+        @path            : 'GetSimulationForMonto'
+        function GetSimulationForMonto(min: Integer, max: Integer)                     returns simulation;
        
         @Core.Description: 'get-simulations-by-user'
         @path            : 'GetSimulatonByUserId'

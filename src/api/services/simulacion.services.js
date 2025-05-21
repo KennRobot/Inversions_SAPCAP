@@ -56,6 +56,32 @@ async function GetSimulationBySymbols(req){
   }
 }
 
+async function GetSimulationForMonto(req) {
+  try {
+    const { min, max } = req.data;
+
+    if (min == null || max == null) {
+      throw new Error("Debes proporcionar valores para 'min' y 'max'");
+    }
+
+    const simulations = await simulationSchema.find({
+      amount: { $gte: min, $lte: max }
+    }).lean();
+
+    if (!simulations || simulations.length === 0) {
+      throw new Error(`No se encontraron simulaciones con monto entre ${min} y ${max}`);
+    }
+
+    return {
+      simulation: simulations
+    };
+
+  } catch (error) {
+    return { error: error.message };
+  }
+}
+
+
 async function SimulateIronCondor(req) {
   try {
     const {
@@ -230,4 +256,4 @@ async function updateUserWallet(userId, profitOrLoss, symbol) {
 }
 
 
-module.exports = { GetAllSimulation, GetSimulationsByUserId, SimulateIronCondor, UpdateSimulationName, DeleteSimulationById, GetSimulationBySymbols };
+module.exports = { GetAllSimulation, GetSimulationsByUserId, SimulateIronCondor, UpdateSimulationName, DeleteSimulationById, GetSimulationBySymbols, GetSimulationForMonto };
