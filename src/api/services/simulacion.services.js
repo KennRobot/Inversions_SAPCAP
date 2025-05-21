@@ -152,6 +152,8 @@ async function SimulateIronCondor(req) {
       );
     }
 
+    const IndicadorVIX = await calculateVolatility(symbol);
+
     // Cálculo de primas
     const premiumShortCall = await calculateOptionPremium(symbol, shortCallStrike, 'call', 'sell');
     const premiumLongCall = await calculateOptionPremium(symbol, longCallStrike, 'call', 'buy');
@@ -186,7 +188,7 @@ async function SimulateIronCondor(req) {
         maxLoss,
         maxProfit,
         riskRewardRatio,
-        percentageReturn
+        percentageReturn,
       }
     });
 
@@ -199,6 +201,7 @@ async function SimulateIronCondor(req) {
       maxProfit,
       riskRewardRatio,
       percentageReturn,
+      IndicadorVIX,
       saved: true,
       simulationId: simulation.idSimulation,
       updatedBalance
