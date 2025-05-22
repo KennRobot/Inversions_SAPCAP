@@ -151,6 +151,10 @@
         @path            : 'GetAllPricesHistory'
         function GetAllPricesHistory()                             returns array of priceshistory;
 
+        @Core.Description: 'Get Historical Options Only Symbol '
+        @path            : 'GetPricesHistoryBySymbol'
+        function GetPricesHistoryBySymbol(symbol : String)         returns array of priceshistory;
+
         //****************** Nuevo: Calcular Indicadores *******************************
         @Core.Description: 'Calculate investment indicators'
         @path: 'CalculateIndicators'

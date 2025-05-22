@@ -2,7 +2,7 @@ const cds = require('@sap/cds');
 const {GetAllUsers,GetUserById, CreateUser, UpdateUser } = require('../services/users.services')
 const {GetAllStrategies, CreateIronCondorStrategy, GetStrategiesByUser} = require('../services/strategies.services')
 const {GetAllSimulation, GetSimulationsByUserId, SimulateIronCondor, UpdateSimulationName, DeleteSimulationById, GetSimulationBySymbols, GetSimulationForMonto, GetSimulationsForRangeDate} = require('../services/simulacion.services')
-const {GetAllPricesHistory , calculateIndicators} = require('../services/priceshistory.services')
+const {GetAllPricesHistory , calculateIndicators, GetPricesHistoryBySymbol} = require('../services/priceshistory.services')
 
 
 module.exports = class InversionsClass extends cds.ApplicationService {
@@ -67,6 +67,10 @@ module.exports = class InversionsClass extends cds.ApplicationService {
         //****************** PARA OBTENER OPCIONES HISTÓRICAS ***********************/
         this.on('GetAllPricesHistory', async (req) => {
             return await GetAllPricesHistory(req);
+        })
+
+        this.on('GetPricesHistoryBySymbol', async (req) => {
+            return await GetPricesHistoryBySymbol(req);
         })
 
         //****************** PARA CALCULAR INDICADORES ***********************/

@@ -11,6 +11,18 @@ async function GetAllPricesHistory(req) {
   }
 }
 
+async function GetPricesHistoryBySymbol(req) {
+  try {
+    const { symbol } = req.data;
+    let prices_historys = await priceHistorySchema.find({ symbol }).lean(); 
+    return {
+      prices_historys: prices_historys
+    };
+  } catch (error) {
+    return error;
+  }
+}
+
 async function calculateIndicators(req) {
   const { symbol, timeframe, interval, indicators } = req.data;
 
@@ -57,4 +69,4 @@ async function calculateIndicators(req) {
   }
 }
 
-module.exports = {  GetAllPricesHistory, calculateIndicators };
+module.exports = {  GetAllPricesHistory, calculateIndicators, GetPricesHistoryBySymbol };
