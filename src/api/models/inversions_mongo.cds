@@ -68,43 +68,87 @@ entity Movements {
 
 //********************** SIMULACION ************************ */
 
+// Entidad principal que representa una simulación completa
 entity Simulation {
-  key idSimulation       : String(36);           // Ej: "AAPL_2024-01-01"
-      idUser             : String(36);
-      idStrategy         : String(10);           // Ej: "IRON"
-      simulationName     : String(100);
-      symbol             : String(10);           // Ej: "AAPL"
-      startDate          : Date;
-      endDate            : Date;
-      amount             : Decimal(15,2);        // Siempre en USD
-      specs              : String(100);          // Ej: "SHORT:50&LONG:200"
-      result             : Decimal(15,2);
-      percentageReturn   : Decimal(5,2);
-      signals            : Composition of many Signals on signals.simulation = $self;
-      detailRow          : Composition of many DetailRows on detailRow.simulation = $self;
+  key idSimulation     : String;          // ID único de la simulación
+      idUser           : String;          // ID del usuario que ejecutó la simulación
+      idStrategy       : String;          // ID de la estrategia utilizada
+      simulationName   : String;          // Nombre de la simulación
+      symbol           : String;          // Símbolo de la acción (e.g. "AAPL")
+      specs            : String;          // Especificaciones (e.g. "SHORT:50&LONG:200")
+      amount           : Decimal(15,2);   // Cantidad invertida al inicio
+      startDate        : Date;            // Fecha de inicio de la simulación
+      endDate          : Date;            // Fecha de término de la simulación
+      percentageReturn : Decimal(10,6);   // Porcentaje de retorno (%)
+      
+      // Relaciones con subestructuras anidadas
+      summary          : Composition of Summary on summary.simulation = $self;
+      signals          : Composition of many Signals on signals.simulation = $self;
+      chart_data       : Composition of many ChartData on chart_data.simulation = $self;
+      detailRow        : Composition of many DetailRows on detailRow.simulation = $self;
 }
+
+// Contiene los resultados acumulados de la simulación
+entity Summary {
+  key simulation       : Association to Simulation; // FK a la simulación principal
+      totalBoughtUnits : Decimal(15,4);             // Total de unidades compradas
+      totalSoldUnits   : Decimal(15,4);             // Total de unidades vendidas
+      remainingUnits   : Decimal(15,4);             // Unidades que quedaron al final
+      finalCash        : Decimal(15,2);             // Efectivo disponible al final
+      finalValue       : Decimal(15,2);             // Valor final del portafolio
+      finalBalance     : Decimal(15,2);             // Balance total al cierre
+      realProfit       : Decimal(15,2);             // Ganancia/pérdida neta
+}
+
+// Lista de señales de compra o venta detectadas durante la simulación
 entity Signals {
-  key ID                 : UUID;
-      simulation         : Association to Simulation;
-      date               : Timestamp;
-      type               : String(10);           // 'buy' | 'sell'
-      price              : Decimal(10,2);
-      reasoning          : String(255);
+  key ID        : UUID;                    // ID único de la señal
+      simulation: Association to Simulation; // FK a la simulación
+      date      : Date;                    // Fecha en que ocurrió la señal
+      type      : String(10);              // Tipo: 'buy' o 'sell'
+      price     : Decimal(10,2);           // Precio de la acción en ese momento
+      reasoning : String(255);             // Razón detrás de la señal
+      shares    : Decimal(15,6);           // Número de acciones compradas/vendidas
 }
+
+// Contiene los datos históricos por día con indicadores técnicos
+entity ChartData {
+  key ID        : UUID;                    // ID único del registro
+      simulation: Association to Simulation; // FK a la simulación
+      date      : Date;                    // Fecha del dato
+      open      : Decimal(10,2);           // Precio de apertura
+      high      : Decimal(10,2);           // Precio más alto
+      low       : Decimal(10,2);           // Precio más bajo
+      close     : Decimal(10,2);           // Precio de cierre
+      volume    : Integer;                 // Volumen negociado
+      indicators: Composition of many Indicators on indicators.chart = $self; // Subdocumento con indicadores
+}
+
+// Subdocumento de ChartData con valores como medias móviles
+entity Indicators {
+  key ID     : UUID;                       // ID único del indicador
+      chart  : Association to ChartData;   // FK a los datos de gráfica
+      key    : String(50);                 // Nombre del indicador (e.g. 'short_ma')
+      value  : Decimal(15,6);              // Valor numérico del indicador
+}
+
+// Estructura para manejar cambios, auditorías o flags lógicos
 entity DetailRows {
-  key ID                 : UUID;
-      simulation         : Association to Simulation;
-      ACTIVED            : Boolean;
-      DELETED            : Boolean;
-      detailRowReg       : Composition of many DetailRowRegs on detailRowReg.detailRow = $self;
+  key ID         : UUID;                   // ID único
+      simulation : Association to Simulation; // FK a la simulación
+      ACTIVED    : Boolean;                // Si el registro está activo
+      DELETED    : Boolean;                // Si el registro está marcado como eliminado
+      detailRowReg : Composition of many DetailRowRegs on detailRowReg.detailRow = $self; // Subdocumentos de auditoría
 }
+
+// Subdocumento con datos de auditoría (registro de modificaciones)
 entity DetailRowRegs {
-  key ID                 : UUID;
-      detailRow          : Association to DetailRows;
-      CURRENT            : Boolean;
-      REGDATE            : Timestamp;
-      REGTIME            : Timestamp;
-      REGUSER            : String(100);
+  key ID         : UUID;                   // ID único
+      detailRow  : Association to DetailRows; // FK al detalle principal
+      CURRENT    : Boolean;                // Si es la versión actual del registro
+      REGDATE    : Date;                   // Fecha de registro
+      REGTIME    : String;                 // Hora de registro (formato hh:mm:ss)
+      REGUSER    : String(100);            // Usuario que hizo la modificación
 }
 
 //************************** PARA PRICES_HISTORY *****************8 */
