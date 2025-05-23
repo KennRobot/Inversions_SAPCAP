@@ -88,24 +88,26 @@ async function GetSimulationsForRangeDate(req) {
     const { startDate, endDate } = req.data;
 
     if (!startDate || !endDate) {
-      throw new Error("Debes proporcionar valores para 'startDate' y 'endDate'");
+      throw new Error("Debes proporcionar valores para 'startDate' y 'endDate'.");
     }
 
-    // Asegurar que las fechas sean objetos Date válidos
-    const start = new Date(startDate);
+    /* const start = new Date(startDate);
     const end = new Date(endDate);
 
     if (isNaN(start) || isNaN(end)) {
       throw new Error("Las fechas proporcionadas no son válidas.");
-    }
+    } */
 
     const simulations = await simulationSchema.find({
-      startDate: { $gte: new Date(startDate) },
-      endDate: { $lte: new Date(endDate) }
+      STARTDATE: { $gte: startDate },
+      ENDDATE: { $lte: endDate }
     }).lean();
 
     if (!simulations || simulations.length === 0) {
-      throw new Error(`No se encontraron simulaciones entre las fechas ${start.toISOString()} y ${end.toISOString()}`);
+      return {
+        message: `No se encontraron simulaciones entre ${startDate} y ${endDate}.`,
+        simulation: []
+      };
     }
 
     return {
