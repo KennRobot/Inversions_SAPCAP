@@ -144,8 +144,6 @@
             message: String;
         };
 
-
-
         //****************** Nuevo: Obtener Opciones Históricas *******************************
         @Core.Description: 'Get Historical Options '
         @path            : 'GetAllPricesHistory'

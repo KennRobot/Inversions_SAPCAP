@@ -11,6 +11,7 @@ async function GetAllSimulation(req) {
     return error;
   }
 }
+//FALTA POR ACTUALIZAR
 async function GetSimulationsByUserId(req) {
   try {
     // Obtener el USER_ID desde el cuerpo de la solicitud (req.data)
@@ -39,10 +40,11 @@ async function GetSimulationsByUserId(req) {
   }
 }
 
+//OBTENER TODAS LAS SIMULACIONES POR SIMBOLO
 async function GetSimulationBySymbols(req){
   try {
     const { symbol } = req.data;
-    const simulation = await simulationSchema.find({ symbol }).lean();
+    const simulation = await simulationSchema.find({ SYMBOL: symbol }).lean();
 
     if (!simulation || simulation.length === 0) {
       throw new Error(`No se encontraron simulaciones con el simbolo de ${symbol}`);
@@ -55,7 +57,7 @@ async function GetSimulationBySymbols(req){
     return error;
   }
 }
-
+//OBTENER SIMULACIONES POR MONTO
 async function GetSimulationForMonto(req) {
   try {
     const { min, max } = req.data;
@@ -65,7 +67,7 @@ async function GetSimulationForMonto(req) {
     }
 
     const simulations = await simulationSchema.find({
-      amount: { $gte: min, $lte: max }
+      AMOUNT: { $gte: min, $lte: max }
     }).lean();
 
     if (!simulations || simulations.length === 0) {

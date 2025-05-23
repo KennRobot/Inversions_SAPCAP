@@ -1,11 +1,6 @@
-/* NO USAR DE MOMENTO */
-
-
-
-
 
 const technicalindicators = require('technicalindicators');
-const { fetchHistoricalOptions } = require('../models/MongoDB/alphavantage');
+const { fetchHistoricalOptions } = require('../models/MongoDB/prices_history');
 
 // Función para calcular los indicadores
 async function calculateIndicators(symbol, indicators) {
