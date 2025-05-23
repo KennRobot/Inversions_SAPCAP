@@ -3,6 +3,7 @@ const { v4: uuidv4 } = require('uuid');
 const { calculateOptionPremium, calculateVolatility, normalCDF } = require('../utils/calculatorsSimulations');
 const usersSchema = require('../models/MongoDB/users');
 
+//OBTENER TODAS LAS SIMULACIONES
 async function GetAllSimulation(req) {
   try {
     let simulation = await simulationSchema.find().lean(); 
@@ -82,7 +83,7 @@ async function GetSimulationForMonto(req) {
     return { error: error.message };
   }
 }
-
+//OBTENER SIMULACIONES POR FECHAS
 async function GetSimulationsForRangeDate(req) {
   try {
     const { startDate, endDate } = req.data;
