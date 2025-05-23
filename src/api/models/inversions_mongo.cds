@@ -102,7 +102,7 @@ entity Summary {
 
 // Lista de señales de compra o venta detectadas durante la simulación
 entity Signals {
-  key ID        : UUID;                    // ID único de la señal
+  key idSignals        : UUID;                    // ID único de la señal
       simulation: Association to Simulation; // FK a la simulación
       date      : Date;                    // Fecha en que ocurrió la señal
       type      : String(10);              // Tipo: 'buy' o 'sell'
@@ -113,7 +113,7 @@ entity Signals {
 
 // Contiene los datos históricos por día con indicadores técnicos
 entity ChartData {
-  key ID        : UUID;                    // ID único del registro
+  key idCharData        : UUID;                    // ID único del registro
       simulation: Association to Simulation; // FK a la simulación
       date      : Date;                    // Fecha del dato
       open      : Decimal(10,2);           // Precio de apertura
@@ -126,15 +126,15 @@ entity ChartData {
 
 // Subdocumento de ChartData con valores como medias móviles
 entity Indicators {
-  key ID     : UUID;                       // ID único del indicador
+  key idIndicators     : UUID;                       // ID único del indicador
       chart  : Association to ChartData;   // FK a los datos de gráfica
-      key    : String(50);                 // Nombre del indicador (e.g. 'short_ma')
+      keyName    : String(50);        // Nombre del indicador (e.g. 'short_ma')
       value  : Decimal(15,6);              // Valor numérico del indicador
 }
 
 // Estructura para manejar cambios, auditorías o flags lógicos
 entity DetailRows {
-  key ID         : UUID;                   // ID único
+  key idDetailsRows         : UUID;                   // ID único
       simulation : Association to Simulation; // FK a la simulación
       ACTIVED    : Boolean;                // Si el registro está activo
       DELETED    : Boolean;                // Si el registro está marcado como eliminado
@@ -143,7 +143,7 @@ entity DetailRows {
 
 // Subdocumento con datos de auditoría (registro de modificaciones)
 entity DetailRowRegs {
-  key ID         : UUID;                   // ID único
+  key idDetailRowRegs         : UUID;                   // ID único
       detailRow  : Association to DetailRows; // FK al detalle principal
       CURRENT    : Boolean;                // Si es la versión actual del registro
       REGDATE    : Date;                   // Fecha de registro
