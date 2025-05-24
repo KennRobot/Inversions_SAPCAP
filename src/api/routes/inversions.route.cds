@@ -132,7 +132,6 @@
             riskRewardRatio: Decimal(10,2);
             percentageReturn: Decimal(5,2);
             saved: Boolean;
-            simulationId: String;
         };
         // Update a simulation name by ID
         @Core.Description: 'Update simulation name by ID'

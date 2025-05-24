@@ -1,7 +1,8 @@
 const simulationSchema = require('../models/MongoDB/simulation');
-const { v4: uuidv4 } = require('uuid');
 const { calculateOptionPremium, calculateVolatility, normalCDF } = require('../utils/calculatorsSimulations');
 const usersSchema = require('../models/MongoDB/users');
+const { v4: uuidv4 } = require('uuid');
+
 
 //OBTENER TODAS LAS SIMULACIONES
 async function GetAllSimulation(req) {
@@ -136,30 +137,27 @@ async function SimulateIronCondor(req) {
       startDate = new Date(),
       endDate = new Date(),
       simulationName = `Iron Condor ${symbol}`,
-      idStrategy = 'IronCondor'
+      idStrategy = 'ironCondor'
     } = req.data;
 
     // Validaciones básicas
     if (!symbol || !idUser || !shortCallStrike || !longCallStrike || !shortPutStrike || !longPutStrike) {
       throw new Error('Faltan datos obligatorios para la simulación.');
     }
-    
-    // Obtener usuario y validar saldo suficiente
+
     const user = await usersSchema.findOne({ idUser }).lean();
-    if (!user) {
-      throw cds.error('Usuario no encontrado.', { code: 'USER_NOT_FOUND', status: 404 });
-    }
+    if (!user) throw cds.error('Usuario no encontrado.', { code: 'USER_NOT_FOUND', status: 404 });
 
     if (user.wallet.balance < amount) {
-      throw cds.error(
-        'Saldo insuficiente para realizar la simulación.',
-        { code: 'INSUFFICIENT_FUNDS', status: 400 }
-      );
+      throw cds.error('Saldo insuficiente para realizar la simulación.', {
+        code: 'INSUFFICIENT_FUNDS',
+        status: 400
+      });
     }
 
+    // Cálculos simulados
     const IndicadorVIX = await calculateVolatility(symbol);
 
-    // Cálculo de primas
     const premiumShortCall = await calculateOptionPremium(symbol, shortCallStrike, 'call', 'sell');
     const premiumLongCall = await calculateOptionPremium(symbol, longCallStrike, 'call', 'buy');
     const premiumShortPut = await calculateOptionPremium(symbol, shortPutStrike, 'put', 'sell');
@@ -171,44 +169,114 @@ async function SimulateIronCondor(req) {
     const riskRewardRatio = maxProfit / maxLoss;
     const percentageReturn = (netCredit / amount) * 100;
 
-    const simulation = await simulationSchema.create({
-      idSimulation: uuidv4(),
-      idUser,
-      idStrategy,
-      symbol,
-      entryDate,
-      expiryDate,
-      startDate,
-      endDate,
-      amount,
-      simulationName,
-      legs: [
-        { strike: shortCallStrike, type: 'call', side: 'sell', premium: premiumShortCall },
-        { strike: longCallStrike, type: 'call', side: 'buy', premium: premiumLongCall },
-        { strike: shortPutStrike, type: 'put', side: 'sell', premium: premiumShortPut },
-        { strike: longPutStrike, type: 'put', side: 'buy', premium: premiumLongPut }
-      ],
-      result: {
-        netCredit,
-        maxLoss,
-        maxProfit,
-        riskRewardRatio,
-        percentageReturn,
+    // ID generado
+    const idSimulation = uuidv4();
+    console.log('Valor idSimulation:', idSimulation);
+
+    // Señales (ejemplo básico, personalízalo)
+    const signals = [
+      {
+        DATE: entryDate,
+        TYPE: 'sell',
+        PRICE: shortCallStrike,
+        REASONING: 'Venta de CALL como parte del Iron Condor',
+        SHARES: 1
+      },
+      {
+        DATE: entryDate,
+        TYPE: 'buy',
+        PRICE: longCallStrike,
+        REASONING: 'Compra de CALL como protección',
+        SHARES: 1
+      },
+      {
+        DATE: entryDate,
+        TYPE: 'sell',
+        PRICE: shortPutStrike,
+        REASONING: 'Venta de PUT como parte del Iron Condor',
+        SHARES: 1
+      },
+      {
+        DATE: entryDate,
+        TYPE: 'buy',
+        PRICE: longPutStrike,
+        REASONING: 'Compra de PUT como protección',
+        SHARES: 1
       }
+    ];
+
+    const summary = {
+      TOTALBOUGHTUNITS: 2,
+      TOTALSOLDUNITS: 2,
+      REMAININGUNITS: 0,
+      FINALCASH: amount + netCredit,
+      FINALVALUE: 0,
+      FINALBALANCE: amount + netCredit,
+      REALPROFIT: netCredit,
+      PERCENTAGERETURN: percentageReturn
+    };
+
+    const chartData = [
+      {
+        DATE: entryDate,
+        OPEN: 100,
+        HIGH: 105,
+        LOW: 95,
+        CLOSE: 102,
+        VOLUME: 1000000,
+        INDICATORS: [
+          { INDICATOR: 'VIX', VALUE: IndicadorVIX },
+          { INDICATOR: 'RSI', VALUE: 48.3 },
+          { INDICATOR: 'MACD', VALUE: 0.5 }
+        ]
+      }
+    ];
+
+    const detailRow = [
+      {
+        ACTIVED: true,
+        DELETED: false,
+        DETAIL_ROW_REG: [
+          {
+            CURRENT: true,
+            REGDATE: new Date(),
+            REGTIME: new Date().toTimeString().split(' ')[0],
+            REGUSER: idUser
+          }
+        ]
+      }
+    ];
+
+    // Guardar en MongoDB
+    await simulationSchema.create({
+      IDSIMULATION: idSimulation,
+      IDUSER: idUser,
+      IDSTRATEGY: idStrategy,
+      SIMULATIONNAME: simulationName,
+      SYMBOL: symbol,
+      SPECS: `Iron Condor - CALL:${shortCallStrike}/${longCallStrike}, PUT:${shortPutStrike}/${longPutStrike}, EXP:${expiryDate}`,
+      AMOUNT: amount,
+      STARTDATE: startDate,
+      ENDDATE: endDate,
+      SIGNALS: signals,
+      SUMMARY: summary,
+      CHART_DATA: chartData,
+      DETAIL_ROW: detailRow
     });
 
-    const profitOrLoss = (percentageReturn / 100) * amount;
+    // Actualizar saldo de usuario
+    const profitOrLoss = summary.REALPROFIT;
     const updatedBalance = await updateUserWallet(idUser, profitOrLoss, symbol);
 
     return {
+      saved: true,
+      simulationId: idSimulation,
       netCredit,
       maxLoss,
       maxProfit,
       riskRewardRatio,
       percentageReturn,
       IndicadorVIX,
-      saved: true,
-      simulationId: simulation.idSimulation,
       updatedBalance
     };
 
@@ -217,6 +285,7 @@ async function SimulateIronCondor(req) {
     throw new Error(`Error al simular estrategia Iron Condor: ${error.message}`);
   }
 }
+
 // Función para actualizar el nombre de la simulación
 async function UpdateSimulationName(req) {
   try {
