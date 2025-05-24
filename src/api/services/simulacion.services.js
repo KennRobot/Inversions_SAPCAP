@@ -1,7 +1,8 @@
 const simulationSchema = require('../models/MongoDB/simulation');
-const { calculateOptionPremium, calculateVolatility, calculateIndicators } = require('../utils/calculatorsSimulations');
+const { calculateOptionPremium, calculateVolatility, generateChartData } = require('../utils/calculatorsSimulations');
 const usersSchema = require('../models/MongoDB/users');
 const { v4: uuidv4 } = require('uuid');
+const priceHistorySchema = require('../models/MongoDB/prices_history');
 
 
 //OBTENER TODAS LAS SIMULACIONES
@@ -157,7 +158,6 @@ async function SimulateIronCondor(req) {
 
     // Cálculos simulados
     const IndicadorVIX = await calculateVolatility(symbol);
-    const IndicadorsRSICMAD = await calculateIndicators(symbol);
 
     const premiumShortCall = await calculateOptionPremium(symbol, shortCallStrike, 'call', 'sell');
     const premiumLongCall = await calculateOptionPremium(symbol, longCallStrike, 'call', 'buy');
@@ -216,21 +216,8 @@ async function SimulateIronCondor(req) {
       PERCENTAGERETURN: percentageReturn
     };
 
-    const chartData = [
-      {
-        DATE: entryDate,
-        OPEN: 100,
-        HIGH: 105,
-        LOW: 95,
-        CLOSE: 102,
-        VOLUME: 1000000,
-        INDICATORS: [
-          { INDICATOR: 'VIX', VALUE: IndicadorVIX },
-          { INDICATOR: 'RSI', VALUE: IndicadorsRSICMAD.RSI },
-          { INDICATOR: 'MACD', VALUE: IndicadorsRSICMAD.MACD }
-        ]
-      }
-    ];
+    // Genera los datos del gráfico para el frontend
+    const chartData = await generateChartData(symbol);
 
     const detailRow = [
       {

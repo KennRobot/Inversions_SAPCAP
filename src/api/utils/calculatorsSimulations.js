@@ -116,7 +116,16 @@ if (!Math.erf) {
   };
 }
 
-//calcular solo el indicador RSI
+function calculateEMA(closes, period) {
+  const k = 2 / (period + 1);
+  let emaArray = [closes[0]];
+  for (let i = 1; i < closes.length; i++) {
+    const ema = closes[i] * k + emaArray[i - 1] * (1 - k);
+    emaArray.push(parseFloat(ema.toFixed(2)));
+  }
+  return emaArray;
+}
+
 function calculateRSI(closes, period = 14) {
   if (closes.length < period + 1) return null;
   let gains = 0;
@@ -132,7 +141,7 @@ function calculateRSI(closes, period = 14) {
   const rs = gains / losses;
   return parseFloat((100 - (100 / (1 + rs))).toFixed(2));
 }
-//calcular solo el indicador MACD
+
 function calculateMACD(closes, shortPeriod = 12, longPeriod = 26) {
   if (closes.length < longPeriod) return { macd: null };
   const shortEMA = calculateEMA(closes, shortPeriod);
@@ -144,31 +153,44 @@ function calculateMACD(closes, shortPeriod = 12, longPeriod = 26) {
   return { macd: recentMacd };
 }
 
-//funcion para obtener los indicadores RSI y MACD
-async function calculateIndicators(symbol) {
+async function generateChartData(symbol) {
   try {
     const data = await priceHistorySchema.find({ symbol }).sort({ date: 1 }).lean();
 
     if (!data || data.length < 30) {
-      throw new Error(`No hay suficientes datos para calcular indicadores para ${symbol}`);
+      throw new Error(`No hay suficientes datos para generar el gráfico de ${symbol}`);
     }
 
-    // Obtener precios de cierre
     const closes = data.map(entry => entry.last);
+    const dates = data.map(entry => entry.date);
 
-    // Calcular RSI y MACD
-    const RSI = calculateRSI(closes);
-    const { macd: MACD } = calculateMACD(closes);
+    // Calcular indicadores
+    const ema = calculateEMA(closes, 10);
+    const rsi = closes.map((_, idx) => {
+      if (idx < 14) return null;
+      return calculateRSI(closes.slice(idx - 14, idx + 1));
+    });
+    const macdData = calculateMACD(closes);
+    const macd = closes.map((_, idx) => {
+      if (idx < 26) return null;
+      return parseFloat((calculateMACD(closes.slice(0, idx + 1)).macd || 0).toFixed(2));
+    });
 
-    return {
-      RSI,
-      MACD
-    };
+    // Armar el chart_data
+    const chart_data = data.map((entry, idx) => ({
+      date: entry.date,
+      close: entry.last,
+      ema: ema[idx] ?? null,
+      rsi: rsi[idx] ?? null,
+      macd: macd[idx] ?? null
+    }));
+
+    return chart_data;
   } catch (error) {
-    console.error(`Error al calcular indicadores para ${symbol}:`, error);
-    throw new Error('Hubo un error al calcular los indicadores RSI y MACD.');
+    console.error(`Error al generar chart_data para ${symbol}:`, error);
+    throw new Error('Hubo un error al generar los datos del gráfico.');
   }
 }
 
 
-module.exports = { calculateVolatility, calculateOptionPremium , normalCDF, calculateEMA, calculateRSI, calculateMACD, calculateIndicators };
+module.exports = { calculateVolatility, calculateOptionPremium , normalCDF, calculateEMA, calculateRSI, calculateMACD, generateChartData };
