@@ -23,6 +23,19 @@ module.exports = class InversionsClass extends cds.ApplicationService {
             return await UpdateUser(req);
         });
 
+        // Handler para crear usuario:
+        this.on('CreateUser', async (req) => {
+            try {
+            const user = await CreateUser(req);
+            // CAP responde con status 201 automáticamente en actions
+            return user;
+            } catch (err) {
+            // errores custom con status
+            if (err.status)  return req.reject(err.status,  err.message);
+            return req.reject(500, err.message);
+            }
+        });
+
         //****************** PARA STRATEGIES ***********************/
         this.on('GetAllStrategies', async (req) => {
             return await GetAllStrategies(req);
@@ -64,6 +77,13 @@ module.exports = class InversionsClass extends cds.ApplicationService {
             return await UpdateSimulationName(req);
         });
 
+        // Handler para eliminar simulación por ID
+        this.on('DeleteSimulation', async (req) => {
+        const { id } = req.data;
+        if (!id) return req.reject(400, 'Falta el parámetro "id"');
+        return await DeleteSimulationById(id);
+        });
+
         //****************** PARA OBTENER OPCIONES HISTÓRICAS ***********************/
         this.on('GetAllPricesHistory', async (req) => {
             return await GetAllPricesHistory(req);
@@ -73,31 +93,6 @@ module.exports = class InversionsClass extends cds.ApplicationService {
             return await GetPricesHistoryBySymbol(req);
         })
 
-        //****************** PARA CALCULAR INDICADORES ***********************/
-        this.on('CalculateIndicators', async (req) => {
-           // console.log('Datos recibidos:', req.data);  // Esto te permitirá ver los datos antes de enviarlos al servicio
-            return await calculateIndicators(req);
-        });
-
-      // Handler para crear usuario:
-      this.on('CreateUser', async (req) => {
-        try {
-          const user = await CreateUser(req);
-          // CAP responde con status 201 automáticamente en actions
-          return user;
-        } catch (err) {
-          // errores custom con status
-          if (err.status)  return req.reject(err.status,  err.message);
-          return req.reject(500, err.message);
-        }
-      });
-
-      // Handler para eliminar simulación por ID
-      this.on('DeleteSimulation', async (req) => {
-      const { id } = req.data;
-      if (!id) return req.reject(400, 'Falta el parámetro "id"');
-      return await DeleteSimulationById(id);
-    });
   
       return super.init();
     }

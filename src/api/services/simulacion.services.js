@@ -174,7 +174,6 @@ async function SimulateIronCondor(req) {
     const idSimulation = uuidv4();
     //console.log('Valor idSimulation:', idSimulation);
 
-    // Señales (ejemplo básico, personalízalo)
     const signals = [
       {
         DATE: entryDate,
