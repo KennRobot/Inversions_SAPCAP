@@ -1,4 +1,4 @@
-function calculateRSI(closes, period = 7) {//GENERALMENTE 14 DIAS 
+function calculateRSI(closes, period = 14) {//GENERALMENTE 14 DIAS 
   if (closes.length < period + 1) return null;
 
   let gains = 0;
@@ -17,18 +17,6 @@ function calculateRSI(closes, period = 7) {//GENERALMENTE 14 DIAS
 
   let rs = gains / losses;
   return parseFloat((100 - (100 / (1 + rs))).toFixed(2));
-}
-
-function calculateEMA(values, period) {
-  const k = 2 / (period + 1);
-  let emaArray = [values[0]];
-
-  for (let i = 1; i < values.length; i++) {
-    const ema = values[i] * k + emaArray[i - 1] * (1 - k);
-    emaArray.push(ema);
-  }
-
-  return emaArray;
 }
 
 function calculateMACD(closes, shortPeriod = 12, longPeriod = 26) {

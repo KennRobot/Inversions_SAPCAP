@@ -1,5 +1,5 @@
 const simulationSchema = require('../models/MongoDB/simulation');
-const { calculateOptionPremium, calculateVolatility, normalCDF } = require('../utils/calculatorsSimulations');
+const { calculateOptionPremium, calculateVolatility, calculateIndicators } = require('../utils/calculatorsSimulations');
 const usersSchema = require('../models/MongoDB/users');
 const { v4: uuidv4 } = require('uuid');
 
@@ -157,6 +157,7 @@ async function SimulateIronCondor(req) {
 
     // Cálculos simulados
     const IndicadorVIX = await calculateVolatility(symbol);
+    const IndicadorsRSICMAD = await calculateIndicators(symbol);
 
     const premiumShortCall = await calculateOptionPremium(symbol, shortCallStrike, 'call', 'sell');
     const premiumLongCall = await calculateOptionPremium(symbol, longCallStrike, 'call', 'buy');
@@ -171,7 +172,7 @@ async function SimulateIronCondor(req) {
 
     // ID generado
     const idSimulation = uuidv4();
-    console.log('Valor idSimulation:', idSimulation);
+    //console.log('Valor idSimulation:', idSimulation);
 
     // Señales (ejemplo básico, personalízalo)
     const signals = [
@@ -226,8 +227,8 @@ async function SimulateIronCondor(req) {
         VOLUME: 1000000,
         INDICATORS: [
           { INDICATOR: 'VIX', VALUE: IndicadorVIX },
-          { INDICATOR: 'RSI', VALUE: 48.3 },
-          { INDICATOR: 'MACD', VALUE: 0.5 }
+          { INDICATOR: 'RSI', VALUE: IndicadorsRSICMAD.RSI },
+          { INDICATOR: 'MACD', VALUE: IndicadorsRSICMAD.MACD }
         ]
       }
     ];
@@ -241,7 +242,7 @@ async function SimulateIronCondor(req) {
             CURRENT: true,
             REGDATE: new Date(),
             REGTIME: new Date().toTimeString().split(' ')[0],
-            REGUSER: idUser
+            REGUSER: user.alias
           }
         ]
       }
