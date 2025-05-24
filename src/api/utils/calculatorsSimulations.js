@@ -116,16 +116,7 @@ if (!Math.erf) {
   };
 }
 
-function calculateEMA(closes, period) {
-  const k = 2 / (period + 1);
-  let emaArray = [closes[0]];
-  for (let i = 1; i < closes.length; i++) {
-    const ema = closes[i] * k + emaArray[i - 1] * (1 - k);
-    emaArray.push(parseFloat(ema.toFixed(2)));
-  }
-  return emaArray;
-}
-
+//calcular solo el indicador RSI
 function calculateRSI(closes, period = 14) {
   if (closes.length < period + 1) return null;
   let gains = 0;
@@ -141,7 +132,7 @@ function calculateRSI(closes, period = 14) {
   const rs = gains / losses;
   return parseFloat((100 - (100 / (1 + rs))).toFixed(2));
 }
-
+//calcular solo el indicador MACD
 function calculateMACD(closes, shortPeriod = 12, longPeriod = 26) {
   if (closes.length < longPeriod) return { macd: null };
   const shortEMA = calculateEMA(closes, shortPeriod);
@@ -153,6 +144,7 @@ function calculateMACD(closes, shortPeriod = 12, longPeriod = 26) {
   return { macd: recentMacd };
 }
 
+//funcion para obtener los indicadores RSI y MACD
 async function calculateIndicators(symbol) {
   try {
     const data = await priceHistorySchema.find({ symbol }).sort({ date: 1 }).lean();
