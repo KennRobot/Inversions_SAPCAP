@@ -7,9 +7,9 @@ const indicatorSchema = new mongoose.Schema({
 
 const chartDataSchema = new mongoose.Schema({
   DATE:       { type: Date, required: true },
-  OPEN:       { type: Number, required: true },
-  HIGH:       { type: Number, required: true },
-  LOW:        { type: Number, required: true },
+  OPEN:       { type: Number, required: false },
+  HIGH:       { type: Number, required: false },
+  LOW:        { type: Number, required: false },
   CLOSE:      { type: Number, required: true },
   VOLUME:     { type: Number, required: true },
   INDICATORS: { type: [indicatorSchema], required: false }
