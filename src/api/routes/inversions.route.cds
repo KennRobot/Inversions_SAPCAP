@@ -172,7 +172,7 @@
         // Delete a simulation by ID
         @path: 'deleteSimulation'
         action DeleteSimulation(id: String) returns {
-            idSimulation: String;
+            IDSIMULATION: String;
             status: String;
         };
     }

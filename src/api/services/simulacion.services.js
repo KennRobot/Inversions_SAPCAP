@@ -310,9 +310,9 @@ async function UpdateSimulationName(req) {
 
 // Delete simulation by ID
 async function DeleteSimulationById(id) {
-  const deleted = await simulationSchema.deleteOne({ idSimulation: id });
+  const deleted = await simulationSchema.deleteOne({ IDSIMULATION: id });
   if (deleted.deletedCount === 0) throw new Error('Simulación no encontrada');
-  return { idSimulation: id, status: 'deleted' };
+  return { IDSIMULATION: id, status: 'deleted' };
 }
 
 // Función para actualizar la wallet del usuario con el retorno de la simulación
