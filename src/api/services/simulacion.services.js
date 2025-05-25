@@ -1,8 +1,8 @@
 const simulationSchema = require('../models/MongoDB/simulation');
-const { calculateOptionPremium, calculateVolatility, generateChartData } = require('../utils/calculatorsSimulations');
+const { calculateOptionPremium, generateChartData } = require('../utils/calculatorsSimulations');
 const usersSchema = require('../models/MongoDB/users');
 const { v4: uuidv4 } = require('uuid');
-const priceHistorySchema = require('../models/MongoDB/prices_history');
+const strategiesSchema = require('../models/MongoDB/strategies');
 
 
 //OBTENER TODAS LAS SIMULACIONES
@@ -180,7 +180,7 @@ async function SimulateIronCondor(req) {
       startDate = new Date(),
       endDate = new Date(),
       simulationName = `Iron Condor ${symbol}`,
-      idStrategy = 'ironCondor'
+      idStrategy
     } = req.data;
 
     // Validaciones básicas
@@ -188,6 +188,25 @@ async function SimulateIronCondor(req) {
       throw new Error('Faltan datos obligatorios para la simulación.');
     }
 
+    // Buscar la estrategia por idStrategy y validar LABELID
+    const strategy = await strategiesSchema.findOne({ LABELID: idStrategy }).lean();
+
+    if (!strategy) {
+      throw cds.error('Estrategia no encontrada.', {
+        code: 'STRATEGY_NOT_FOUND',
+        status: 404
+      });
+    }
+
+    if (strategy.LABELID !== 'IRON_CONDOR') {
+      throw cds.error('La estrategia especificada no es de tipo Iron Condor.', {
+        code: 'INVALID_STRATEGY_LABELID',
+        status: 400
+      });
+    }
+
+
+    //VALIDACIONES USUARIO
     const user = await usersSchema.findOne({ idUser }).lean();
     if (!user) throw cds.error('Usuario no encontrado.', { code: 'USER_NOT_FOUND', status: 404 });
 
