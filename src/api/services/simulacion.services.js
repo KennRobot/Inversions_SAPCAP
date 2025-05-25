@@ -122,6 +122,48 @@ async function GetSimulationsForRangeDate(req) {
   }
 }
 
+// Función para actualizar el nombre de la simulación
+async function UpdateSimulationName(req) {
+  try {
+    const { idSimulation, newName } = req.data;
+
+    // Validación de entrada
+    if (!idSimulation || !newName) {
+      throw new Error('Se requiere el ID de la simulación y el nuevo nombre.');
+    }
+
+    // Verificar que exista la simulación
+    const simulation = await simulationSchema.findOne({ idSimulation }).lean();
+    if (!simulation) {
+      throw new Error(`Simulación con ID ${idSimulation} no encontrada.`);
+    }
+
+    // Actualizar el nombre de la simulación
+    await simulationSchema.updateOne(
+      { idSimulation },
+      { $set: { simulationName: newName } }
+    );
+
+    return {
+      success: true,
+      message: `Nombre de la simulación actualizado a "${newName}".`,
+      idSimulation,
+      newName
+    };
+
+  } catch (error) {
+    console.error('Error en UpdateSimulationName:', error);
+    throw new Error(`Error al actualizar el nombre de la simulación: ${error.message}`);
+  }
+}
+
+// Delete simulation by ID
+async function DeleteSimulationById(id) {
+  const deleted = await simulationSchema.deleteOne({ idSimulation: id });
+  if (deleted.deletedCount === 0) throw new Error('Simulación no encontrada');
+  return { idSimulation: id, status: 'deleted' };
+}
+
 
 async function SimulateIronCondor(req) {
   try {
@@ -157,7 +199,7 @@ async function SimulateIronCondor(req) {
     }
 
     // Cálculos simulados
-    const IndicadorVIX = await calculateVolatility(symbol);
+    //const IndicadorVIX = await calculateVolatility(symbol);
 
     const premiumShortCall = await calculateOptionPremium(symbol, shortCallStrike, 'call', 'sell');
     const premiumLongCall = await calculateOptionPremium(symbol, longCallStrike, 'call', 'buy');
@@ -169,6 +211,9 @@ async function SimulateIronCondor(req) {
     const maxProfit = netCredit;
     const riskRewardRatio = maxProfit / maxLoss;
     const percentageReturn = (netCredit / amount) * 100;
+
+    // Genera los datos del gráfico para el frontend
+    const chartData = await generateChartData(symbol);
 
     // ID generado
     const idSimulation = uuidv4();
@@ -216,8 +261,6 @@ async function SimulateIronCondor(req) {
       PERCENTAGERETURN: percentageReturn
     };
 
-    // Genera los datos del gráfico para el frontend
-    const chartData = await generateChartData(symbol);
 
     const detailRow = [
       {
@@ -263,7 +306,6 @@ async function SimulateIronCondor(req) {
       maxProfit,
       riskRewardRatio,
       percentageReturn,
-      IndicadorVIX,
       updatedBalance
     };
 
@@ -273,6 +315,7 @@ async function SimulateIronCondor(req) {
   }
 }
 
+<<<<<<< HEAD
 // Función para actualizar el nombre de la simulación
 async function UpdateSimulationName(req) {
   try {
@@ -314,6 +357,8 @@ async function DeleteSimulationById(id) {
   if (deleted.deletedCount === 0) throw new Error('Simulación no encontrada');
   return { IDSIMULATION: id, status: 'deleted' };
 }
+=======
+>>>>>>> 445501b08561b7987fd80910bc5aefd20b581a4d
 
 // Función para actualizar la wallet del usuario con el retorno de la simulación
 async function updateUserWallet(userId, profitOrLoss, symbol) {

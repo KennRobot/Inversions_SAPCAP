@@ -1,117 +1,74 @@
 const priceHistorySchema = require('../models/MongoDB/prices_history');
 const math = require('mathjs');
 
-// Calcular la volatilidad histórica utilizando los precios de cierre
-//INDICADOR VIX
-async function calculateVolatility(symbol) {
-  try {
-    const data = await priceHistorySchema.find({ symbol }).sort({ date: 1 }).lean();
-    
-    if (!data || data.length < 2) {
-      throw new Error(`No hay suficientes datos para calcular la volatilidad de ${symbol}`);
-    }
-
-    // Obtener precios de cierre
-    const closePrices = data.map(entry => entry.last);
-
-    // Calcular los retornos logarítmicos
-    const logReturns = [];
-
-    for (let i = 1; i < closePrices.length; i++) {
-      const prev = closePrices[i - 1];
-      const current = closePrices[i];
-
-      if (
-        typeof prev === 'number' && !isNaN(prev) && prev > 0 &&
-        typeof current === 'number' && !isNaN(current) && current > 0
-      ) {
-        const logReturn = Math.log(current / prev);
-        logReturns.push(logReturn);
-
-        // Imprimir solo precios válidos usados en el cálculo
-       //console.log(`Precios válidos en posición ${i}: prev=${prev}, current=${current}, logReturn=${logReturn}`);
-      }
-    }
-
-    // Calcular la desviación estándar de los retornos logarítmicos
-    const volatility = math.std(logReturns) * Math.sqrt(252); // Usamos 252 como días de trading en un año
-
-    return volatility;
-  } catch (error) {
-    console.error(`Error al calcular volatilidad para ${symbol}:`, error);
-    throw new Error('Hubo un error al calcular la volatilidad.');
-  }
-}
-
+// === FUNCIÓN PRINCIPAL: Calcular Prima de Opción ===
 async function calculateOptionPremium(symbol, strike, type, side) {
-  // Obtener datos requeridos
-  const price = await getCurrentPrice(symbol); // Obtener el precio actual del activo
-  const volatility = await calculateVolatility(symbol); // Calcular la volatilidad histórica
-  const riskFreeRate = 0.05; // Tasa libre de riesgo (5% como ejemplo)
-  const timeToExpiration = 30 / 365; // Tiempo hasta la expiración (en años). Aquí asumimos 30 días
+  const data = await priceHistorySchema.find({ symbol, last: { $gt: 0 } }).sort({ date: 1 }).lean();
 
-  // Calcular d1 y d2
+  if (!data || data.length < 2) {
+    throw new Error(`No hay suficientes datos para ${symbol}`);
+  }
+
+  const closePrices = data.map(entry => entry.last);
+  const price = closePrices[closePrices.length - 1];
+
+  const logReturns = [];
+  for (let i = 1; i < closePrices.length; i++) {
+    const prev = closePrices[i - 1];
+    const current = closePrices[i];
+    if (typeof prev === 'number' && prev > 0 && typeof current === 'number' && current > 0) {
+      logReturns.push(Math.log(current / prev));
+    }
+  }
+
+  const volatility = math.std(logReturns) * Math.sqrt(252);
+  const riskFreeRate = 0.05;
+  const timeToExpiration = 30 / 365;
+
   const d1 = (math.log(price / strike) + (riskFreeRate + 0.5 * math.pow(volatility, 2)) * timeToExpiration) / (volatility * math.sqrt(timeToExpiration));
   const d2 = d1 - volatility * math.sqrt(timeToExpiration);
 
-  // Calcular la prima de la opción (Call o Put)
   if (type === 'call') {
-    if (side === 'buy') {
-      return price * normalCDF(d1) - strike * math.exp(-riskFreeRate * timeToExpiration) * normalCDF(d2);
-    } else if (side === 'sell') {
-      return strike * math.exp(-riskFreeRate * timeToExpiration) * normalCDF(-d2) - price * normalCDF(-d1);
-    }
+    return side === 'buy'
+      ? price * normalCDF(d1) - strike * math.exp(-riskFreeRate * timeToExpiration) * normalCDF(d2)
+      : strike * math.exp(-riskFreeRate * timeToExpiration) * normalCDF(-d2) - price * normalCDF(-d1);
   } else if (type === 'put') {
-    if (side === 'buy') {
-      return strike * math.exp(-riskFreeRate * timeToExpiration) * normalCDF(-d2) - price * normalCDF(-d1);
-    } else if (side === 'sell') {
-      return price * normalCDF(d1) - strike * math.exp(-riskFreeRate * timeToExpiration) * normalCDF(d2);
-    }
+    return side === 'buy'
+      ? strike * math.exp(-riskFreeRate * timeToExpiration) * normalCDF(-d2) - price * normalCDF(-d1)
+      : price * normalCDF(d1) - strike * math.exp(-riskFreeRate * timeToExpiration) * normalCDF(d2);
   }
 
   throw new Error('Tipo de opción no válido');
 }
 
-// Obtener el precio más reciente del símbolo desde la colección de historial de precios
-async function getCurrentPrice(symbol) {
-  const latest = await priceHistorySchema.findOne({symbol: symbol,
-    last: { $gt: 0 }
-  }).sort({ date: -1 });
-
-
-  //console.log('Precio encontrado para', symbol, ':', latest); // <== Añade esto
-
-
-  if (!latest || typeof latest.last !== 'number') {
-    throw new Error(`No se pudo encontrar el precio actual para el símbolo ${symbol}`);
+// === FUNCIÓN: Calcular Volatilidad ===
+async function calculateVolatility(symbol) {
+  const data = await priceHistorySchema.find({ symbol }).sort({ date: 1 }).lean();
+  if (!data || data.length < 2) throw new Error(`No hay suficientes datos para ${symbol}`);
+  const closePrices = data.map(entry => entry.last);
+  const logReturns = [];
+  for (let i = 1; i < closePrices.length; i++) {
+    const prev = closePrices[i - 1];
+    const current = closePrices[i];
+    if (typeof prev === 'number' && prev > 0 && typeof current === 'number' && current > 0) {
+      logReturns.push(Math.log(current / prev));
+    }
   }
-
-  return latest.last;
+  return math.std(logReturns) * Math.sqrt(252);
 }
 
-
-// Función de distribución acumulativa de la normal estándar
+// === FUNCIONES AUXILIARES ===
 function normalCDF(x) {
   return (1.0 + Math.erf(x / Math.sqrt(2))) / 2.0;
 }
 
-// Polyfill de Math.erf si no está disponible (algunas versiones de Node.js no lo incluyen)
 if (!Math.erf) {
   Math.erf = function (x) {
-    // Aproximación de Abramowitz y Stegun fórmula 7.1.26
-    const a1 =  0.254829592;
-    const a2 = -0.284496736;
-    const a3 =  1.421413741;
-    const a4 = -1.453152027;
-    const a5 =  1.061405429;
-    const p  =  0.3275911;
-
+    const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741, a4 = -1.453152027, a5 = 1.061405429, p = 0.3275911;
     const sign = x >= 0 ? 1 : -1;
     x = Math.abs(x);
-
     const t = 1.0 / (1.0 + p * x);
     const y = 1.0 - ((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
-
     return sign * y;
   };
 }
@@ -128,8 +85,7 @@ function calculateEMA(closes, period) {
 
 function calculateRSI(closes, period = 14) {
   if (closes.length < period + 1) return null;
-  let gains = 0;
-  let losses = 0;
+  let gains = 0, losses = 0;
   for (let i = 1; i <= period; i++) {
     const change = closes[i] - closes[i - 1];
     if (change > 0) gains += change;
@@ -143,54 +99,60 @@ function calculateRSI(closes, period = 14) {
 }
 
 function calculateMACD(closes, shortPeriod = 12, longPeriod = 26) {
-  if (closes.length < longPeriod) return { macd: null };
+  if (closes.length < longPeriod) return Array(closes.length).fill(null);
   const shortEMA = calculateEMA(closes, shortPeriod);
   const longEMA = calculateEMA(closes, longPeriod);
-  const macdArray = shortEMA.map((val, idx) =>
+  return shortEMA.map((val, idx) =>
     idx < longPeriod - 1 ? null : parseFloat((val - longEMA[idx]).toFixed(2))
   );
-  const recentMacd = macdArray[macdArray.length - 1];
-  return { macd: recentMacd };
 }
 
+// === FUNCIÓN: Generar datos del gráfico con indicadores ===
 async function generateChartData(symbol) {
-  try {
-    const data = await priceHistorySchema.find({ symbol }).sort({ date: 1 }).lean();
+  const data = await priceHistorySchema.find({ symbol }).sort({ date: 1 }).lean();
 
-    if (!data || data.length < 30) {
-      throw new Error(`No hay suficientes datos para generar el gráfico de ${symbol}`);
-    }
-
-    const closes = data.map(entry => entry.last);
-    const dates = data.map(entry => entry.date);
-
-    // Calcular indicadores
-    const ema = calculateEMA(closes, 10);
-    const rsi = closes.map((_, idx) => {
-      if (idx < 14) return null;
-      return calculateRSI(closes.slice(idx - 14, idx + 1));
-    });
-    const macdData = calculateMACD(closes);
-    const macd = closes.map((_, idx) => {
-      if (idx < 26) return null;
-      return parseFloat((calculateMACD(closes.slice(0, idx + 1)).macd || 0).toFixed(2));
-    });
-
-    // Armar el chart_data
-    const chart_data = data.map((entry, idx) => ({
-      date: entry.date,
-      close: entry.last,
-      ema: ema[idx] ?? null,
-      rsi: rsi[idx] ?? null,
-      macd: macd[idx] ?? null
-    }));
-
-    return chart_data;
-  } catch (error) {
-    console.error(`Error al generar chart_data para ${symbol}:`, error);
-    throw new Error('Hubo un error al generar los datos del gráfico.');
+  if (!data || data.length < 30) {
+    throw new Error(`No hay suficientes datos para generar gráfico de ${symbol}`);
   }
+
+  const closes = data.map(entry => entry.last);
+  const volatility = await calculateVolatility(symbol); // indicador VIX (valor único)
+  const rsiArray = closes.map((_, idx) => idx < 14 ? null : calculateRSI(closes.slice(idx - 14, idx + 1)));
+  const macdArray = calculateMACD(closes);
+
+const chart_data = data.map((entry, idx) => ({
+  DATE: entry.date,
+  OPEN: entry.open ?? null,  
+  HIGH: entry.high ?? null,
+  LOW: entry.low ?? null,
+  CLOSE: entry.last,
+  VOLUME: entry.volume,
+  INDICATORS: [
+    {
+      INDICATOR: 'VIX',
+      VALUE: parseFloat(volatility.toFixed(4))
+    },
+    {
+      INDICATOR: 'RSI',
+      VALUE: rsiArray[idx]
+    },
+    {
+      INDICATOR: 'MACD',
+      VALUE: macdArray[idx]
+    }
+  ].filter(i => i.VALUE !== null)
+}));
+
+
+  return chart_data;
 }
 
-
-module.exports = { calculateVolatility, calculateOptionPremium , normalCDF, calculateEMA, calculateRSI, calculateMACD, generateChartData };
+module.exports = {
+  calculateVolatility,
+  calculateOptionPremium,
+  normalCDF,
+  calculateEMA,
+  calculateRSI,
+  calculateMACD,
+  generateChartData
+};
