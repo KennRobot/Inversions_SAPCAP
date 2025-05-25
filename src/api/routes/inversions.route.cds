@@ -63,21 +63,20 @@
         @path            : 'GetAllStrategies'
         function GetAllStrategies()                                returns array of strategies;
 
-        @Core.Description: 'create-strategy-Iron-Condor'
-        @path            : 'CreateIronCondorStrategy'
-        action   CreateIronCondorStrategy(userId : String,
-                                        type : String,
-                                        symbol : String,
-                                        startDate : Date,
-                                        endDate : Date,
-                                        legs : many {
-            type       : String;
-            position   : String;
-            strike     : Integer;
-        })                                                         returns {
-            strategyId : String;
-            status     : String;
-        };
+        @Core.Description: 'Create a new investment strategy'
+        @path: 'CreateStrategy'
+        action CreateStrategy(
+            VALUEID     : String,
+            LABELID     : String,
+            VALUE       : String,
+            COMPANYID   : Integer,
+            CEDIID      : Integer,
+            ALIAS       : String null,
+            SEQUENCE    : Integer null,
+            IMAGE       : String null,
+            DESCRIPTION : String null,
+            USER_ID     : String null
+        ) returns strategies;
 
         @Core.Description: 'Get strategies by user ID'
         @path            : 'GetStrategiesByUser'

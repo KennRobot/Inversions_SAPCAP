@@ -11,63 +11,68 @@ async function GetAllStrategies(req) {
   }
 }
 
-async function CreateIronCondorStrategy(req) {
+async function CreateStrategy(req) {
   try {
-    const {
-      userId,
-      type,
-      symbol,
-      startDate,
-      endDate,
-      legs
+    const { 
+      VALUEID,
+      VALUE,
+      LABELID,
+      COMPANYID,
+      CEDIID,
+      ALIAS,
+      SEQUENCE,
+      IMAGE,
+      DESCRIPTION,
+      USER_ID // Asumiendo que necesitamos asociar el usuario creador
     } = req.data;
 
-    // Contar estrategias existentes
-    const count = await strategiesSchema.countDocuments();
-
-    // Generar nuevo ID formateado con ceros
-    const strategyId = `strat-${String(count + 1).padStart(3, '0')}`;
-
-    if (!userId || !type || !symbol || !startDate || !endDate || !legs || legs.length !== 4) {
-      throw new Error('Datos incompletos o incorrectos');
+    // Validación básica de campos requeridos
+    if (!VALUEID || !VALUE || !LABELID || !COMPANYID || !CEDIID) {
+      throw {
+        status: 400,
+        message: 'Faltan campos obligatorios: VALUEID, VALUE, LABELID, COMPANYID, CEDIID'
+      };
     }
 
-    // Asignar strikes según el tipo y posición
-    const strategy = {
-      STRATEGY_ID: strategyId,
-      USER_ID: userId,
-      TYPE: type,
-      UNDERLYING: symbol,
-      OPENED_AT: new Date(startDate),
-      CLOSED_AT: new Date(endDate),
-      POSITIONS: {
-        CALL_CREDIT_SPREAD: {
-          SHORT_CALL: legs.find(l => l.type === 'call' && l.position === 'short')?.strike,
-          LONG_CALL: legs.find(l => l.type === 'call' && l.position === 'long')?.strike
-        },
-        PUT_CREDIT_SPREAD: {
-          SHORT_PUT: legs.find(l => l.type === 'put' && l.position === 'short')?.strike,
-          LONG_PUT: legs.find(l => l.type === 'put' && l.position === 'long')?.strike
-        }
-      },
-      PREMIUM_COLLECTED: 0,
-      RISK_INDICATORS_SNAPSHOT: {
-        VIX: 0,
-        RSI: 0,
-        PUT_CALL_RATIO: 0
-      },
-      NOTES: ""
+    // Estructura de DETAIL_ROW según el modelo
+    const detailRow = {
+      ACTIVED: true,
+      DELETED: false,
+      DETAIL_ROW_REG: [{
+        CURRENT: true,
+        REGDATE: new Date(),
+        REGTIME: new Date(),
+        REGUSER: USER_ID || 'system' // Usar USER_ID o 'system' si no está disponible
+      }]
     };
 
-    await newStrategy.save();
+    const newStrategy = new strategiesSchema({
+      VALUEID,
+      LABELID,
+      VALUE,
+      ALIAS: ALIAS || '',
+      COMPANYID,
+      CEDIID,
+      VALUEPAID: '', // Valor por defecto según modelo
+      SEQUENCE: SEQUENCE || 0,
+      IMAGE: IMAGE || '',
+      DESCRIPTION: DESCRIPTION || '',
+      DETAIL_ROW: detailRow,
+      USER_ID // Asociar el usuario creador si es necesario
+    });
 
-    return {
-      strategyId: strategyId,
-      status: "created"
-    };
+    const savedStrategy = await newStrategy.save();
+    return savedStrategy.toObject(); // Devuelve como objeto simple
 
   } catch (error) {
-    throw new Error(`Error al crear la estrategia: ${error.message}`);
+    console.error('Error en CreateStrategy:', error);
+    if (error.status) {
+      throw error; // Preserva errores personalizados
+    }
+    throw {
+      status: 500,
+      message: `Error al crear la estrategia: ${error.message}`
+    };
   }
 }
 
@@ -90,4 +95,4 @@ async function GetStrategiesByUser(req) {
 }
 
 
-module.exports = { GetAllStrategies, CreateIronCondorStrategy, GetStrategiesByUser };
+module.exports = { GetAllStrategies, CreateStrategy, GetStrategiesByUser };

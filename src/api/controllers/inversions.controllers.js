@@ -1,6 +1,6 @@
 const cds = require('@sap/cds');
 const {GetAllUsers,GetUserById, CreateUser, UpdateUser } = require('../services/users.services')
-const {GetAllStrategies, CreateIronCondorStrategy, GetStrategiesByUser} = require('../services/strategies.services')
+const {GetAllStrategies, CreateStrategy, GetStrategiesByUser} = require('../services/strategies.services')
 const {GetAllSimulation, GetSimulationsByUserId, SimulateIronCondor, UpdateSimulationName, DeleteSimulationById, GetSimulationBySymbols, GetSimulationForMonto, GetSimulationsForRangeDate} = require('../services/simulacion.services')
 const {GetAllPricesHistory , calculateIndicators, GetPricesHistoryBySymbol} = require('../services/priceshistory.services')
 
@@ -40,8 +40,14 @@ module.exports = class InversionsClass extends cds.ApplicationService {
         this.on('GetAllStrategies', async (req) => {
             return await GetAllStrategies(req);
         });
-        this.on('CreateIronCondorStrategy', async (req) => {
-            return await CreateIronCondorStrategy(req);
+        this.on('CreateStrategy', async (req) => {
+            try {
+                const strategy = await CreateStrategy(req);
+                return strategy;
+            } catch (err) {
+                if (err.status) return req.reject(err.status, err.message);
+                return req.reject(500, err.message);
+            }
         });
         this.on('GetStrategiesByUser', async (req) => {
             return await GetStrategiesByUser(req);
