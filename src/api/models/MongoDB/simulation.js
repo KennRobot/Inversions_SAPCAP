@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const indicatorSchema = new mongoose.Schema({
   INDICATOR: { type: String, required: true },
-  VALUE:     { type: Number, required: true }
+  VALUE:     { type: Number, required: false }
 }, { _id: false });
 
 const chartDataSchema = new mongoose.Schema({

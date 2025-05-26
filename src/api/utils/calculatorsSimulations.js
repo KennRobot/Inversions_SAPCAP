@@ -66,35 +66,38 @@ if (!Math.erf) {
   };
 }
 
-function calculateEMA(prices, period) {
+function calculateEMA(closes, period) {
   const k = 2 / (period + 1);
-  const emaArray = [prices[0]];
-  for (let i = 1; i < prices.length; i++) {
-    emaArray.push(prices[i] * k + emaArray[i - 1] * (1 - k));
+  let emaArray = [closes[0]];
+  for (let i = 1; i < closes.length; i++) {
+    const ema = closes[i] * k + emaArray[i - 1] * (1 - k);
+    emaArray.push(parseFloat(ema.toFixed(2)));
   }
   return emaArray;
 }
 
-function calculateRSI(prices, period = 14) {
-  if (prices.length < period + 1) return null;
+function calculateRSI(closes, period = 14) {
+  if (closes.length < period + 1) return null;
   let gains = 0, losses = 0;
   for (let i = 1; i <= period; i++) {
-    const diff = prices[i] - prices[i - 1];
-    if (diff > 0) gains += diff;
-    else losses -= diff;
+    const change = closes[i] - closes[i - 1];
+    if (change > 0) gains += change;
+    else losses -= change;
   }
   gains /= period;
   losses /= period;
   if (losses === 0) return 100;
   const rs = gains / losses;
-  return 100 - 100 / (1 + rs);
+  return parseFloat((100 - (100 / (1 + rs))).toFixed(2));
 }
 
-function calculateMACD(prices, shortPeriod = 12, longPeriod = 26) {
-  if (prices.length < longPeriod) return Array(prices.length).fill(null);
-  const shortEMA = calculateEMA(prices, shortPeriod);
-  const longEMA = calculateEMA(prices, longPeriod);
-  return prices.map((_, i) => i < longPeriod - 1 ? null : shortEMA[i] - longEMA[i]);
+function calculateMACD(closes, shortPeriod = 12, longPeriod = 26) {
+  if (closes.length < longPeriod) return Array(closes.length).fill(null);
+  const shortEMA = calculateEMA(closes, shortPeriod);
+  const longEMA = calculateEMA(closes, longPeriod);
+  return shortEMA.map((val, idx) =>
+    idx < longPeriod - 1 ? null : parseFloat((val - longEMA[idx]).toFixed(2))
+  );
 }
 
 // === FUNCIÓN: Generar datos del gráfico con indicadores ===
@@ -103,11 +106,10 @@ async function generateChartData(symbol) {
 
   if (data.length < 30) throw new Error(`No hay suficientes datos para generar gráfico de ${symbol}`);
 
+  const closes = data.map(entry => entry.last);
   const volatility = computeVolatility(closePrices);
-  const rsiArray = closePrices.map((_, i) =>
-    i < 14 ? null : calculateRSI(closePrices.slice(i - 14, i + 1))
-  );
-  const macdArray = calculateMACD(closePrices);
+  const rsiArray = closes.map((_, idx) => idx < 14 ? null : calculateRSI(closes.slice(idx - 14, idx + 1)));
+  const macdArray = calculateMACD(closes);
 
   return data.map((entry, i) => ({
     DATE: entry.date,
@@ -117,9 +119,18 @@ async function generateChartData(symbol) {
     CLOSE: entry.last,
     VOLUME: entry.volume,
     INDICATORS: [
-      { INDICATOR: 'VIX', VALUE: parseFloat(volatility.toFixed(4)) },
-      rsiArray[i] != null && { INDICATOR: 'RSI', VALUE: parseFloat(rsiArray[i].toFixed(2)) },
-      macdArray[i] != null && { INDICATOR: 'MACD', VALUE: parseFloat(macdArray[i].toFixed(2)) }
+    {
+      INDICATOR: 'VIX',
+      VALUE: parseFloat(volatility.toFixed(4))
+    },
+    {
+      INDICATOR: 'RSI',
+      VALUE: rsiArray[i]
+    },
+    {
+      INDICATOR: 'MACD',
+      VALUE: macdArray[i]
+    }
     ].filter(Boolean)
   }));
 }
