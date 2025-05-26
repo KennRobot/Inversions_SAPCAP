@@ -76,20 +76,27 @@ function calculateEMA(closes, period) {
   return emaArray;
 }
 
-function calculateRSI(closes, period = 14) {
-  if (closes.length < period + 1) return null;
-  let gains = 0, losses = 0;
-  for (let i = 1; i <= period; i++) {
-    const change = closes[i] - closes[i - 1];
-    if (change > 0) gains += change;
-    else losses -= change;
+function calculateRSIArray(closes, period = 14) {
+  const rsiArray = Array(closes.length).fill(null);
+  if (closes.length < period + 1) return rsiArray;
+
+  for (let i = period; i < closes.length; i++) {
+    const window = closes.slice(i - period, i + 1);
+    let gains = 0, losses = 0;
+    for (let j = 1; j < window.length; j++) {
+      const change = window[j] - window[j - 1];
+      if (change > 0) gains += change;
+      else losses -= change;
+    }
+    gains /= period;
+    losses /= period;
+    const rs = losses === 0 ? 100 : gains / losses;
+    const rsi = losses === 0 ? 100 : 100 - (100 / (1 + rs));
+    rsiArray[i] = parseFloat(rsi.toFixed(2));
   }
-  gains /= period;
-  losses /= period;
-  if (losses === 0) return 100;
-  const rs = gains / losses;
-  return parseFloat((100 - (100 / (1 + rs))).toFixed(2));
+  return rsiArray;
 }
+
 
 function calculateMACD(closes, shortPeriod = 12, longPeriod = 26) {
   if (closes.length < longPeriod) return Array(closes.length).fill(null);
@@ -103,12 +110,14 @@ function calculateMACD(closes, shortPeriod = 12, longPeriod = 26) {
 // === FUNCIÓN: Generar datos del gráfico con indicadores ===
 async function generateChartData(symbol) {
   const { data, closePrices } = await getValidClosePrices(symbol);
-
-  if (data.length < 30) throw new Error(`No hay suficientes datos para generar gráfico de ${symbol}`);
-
   const closes = data.map(entry => entry.last);
+
+  if (closes.length < 30) {
+    throw new Error(`No hay suficientes datos para ${symbol}. Tiene ${closes.length}`);
+  }
+
   const volatility = computeVolatility(closePrices);
-  const rsiArray = closes.map((_, idx) => idx < 14 ? null : calculateRSI(closes.slice(idx - 14, idx + 1)));
+  const rsiArray = calculateRSIArray(closes);  // <-- aquí usamos el nuevo RSI por array
   const macdArray = calculateMACD(closes);
 
   return data.map((entry, i) => ({
@@ -119,27 +128,27 @@ async function generateChartData(symbol) {
     CLOSE: entry.last,
     VOLUME: entry.volume,
     INDICATORS: [
-    {
-      INDICATOR: 'VIX',
-      VALUE: parseFloat(volatility.toFixed(4))
-    },
-    {
-      INDICATOR: 'RSI',
-      VALUE: rsiArray[i]
-    },
-    {
-      INDICATOR: 'MACD',
-      VALUE: macdArray[i]
-    }
-    ].filter(Boolean)
+      {
+        INDICATOR: 'VIX',
+        VALUE: parseFloat(volatility.toFixed(4))
+      },
+      {
+        INDICATOR: 'RSI',
+        VALUE: rsiArray[i]
+      },
+      {
+        INDICATOR: 'MACD',
+        VALUE: macdArray[i]
+      }
+    ].filter(ind => ind.VALUE !== null)
   }));
 }
+
 
 module.exports = {
   calculateOptionPremium,
   normalCDF,
   calculateEMA,
-  calculateRSI,
   calculateMACD,
   generateChartData
 };
