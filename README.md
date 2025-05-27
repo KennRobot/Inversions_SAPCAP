@@ -126,8 +126,9 @@ Endpoint | URL | Body | Finish | Creator | Description
 
 Endpoint | URL | Body | Finish | Creator | Description
 ---------|----------|---------|---------|---------|---------
-`GET`  |  /api/inv/GetAllSimulation | none | Yes| Kennby| Todas las simulaciones
 `GET`  |  /api/inv/GetAllPricesHistory | none | Yes| Kennby | Todos los precios historicos
+`GET`  |  /api/inv/GetPricesHistoryBySymbol | {"symbol": "KO"} | Yes| Kennby | Todos los precios historicos por simbolo/empresa
+`GET`  |  /api/inv/GetAllSimulation | none | Yes| Kennby| Todas las simulaciones
 `GET`  |  /api/inv/GetSimulationBySymbols | {"symbol": "AMZN"} | Yes| Kennby | Todas las simulaciones con filtro de simbolo de la acciones
 `GET`  |  /api/inv/GetSimulationForMonto | {"min": 1000,"max": 2000} | Yes| Kennby | Todas las simulaciones con un rango de capital invertido
 `GET`  |  /api/inv/GetSimulationsForRangeDate | {"startDate": "2025-05-01","endDate": "2025-06-30"} | Yes| Kennby | Todas las simulaciones con un rango fechas
