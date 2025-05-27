@@ -111,8 +111,7 @@ Endpoint | URL | Body | Finish | Creator | Description
 `GET`  |  /api/inv/GetAllUsers | none | Yes | Kennby| Todos los usuarios
 `GET`  |  /api/inv/GetUserById | {"USER_ID": "user-001"} | Yes| Kennby| Un solo  usuarios
 `POST`  |  /api/inv/CreateUser | { "name": "Nombre","lastName": "Apellido","birthDate": "YYYY-MM-DD","alias": "Alias","email": "Correo@example.com","phoneNumber": "### ### ####","departament": "Departamento","street": "calle","postalCode": #####,"city": "Tepic","state": "Nay","country": "MX" } | Yes| Jesus | Nuevo usuario
-`POST`  |  /api/inv/UpdateUser |{"USER_ID": "user-003","name": "Juan A","lastName": "Pérez","birthDate": "1990-01-01","alias": "juanp","email": "juan@example.com","phoneNumber": "+521234567890","departament": "Finanzas","street": "Calle Falsa 123","postalCode": 12345,"city": "Ciudad de México","state": "CDMX","country": "México","wallet": {"balance": 2500.00,
-"currency": "MXN"}}| Yes| Pedro | Actualizar Usuario
+`POST`  |  /api/inv/UpdateUser |{"USER_ID": "user-003","name": "Juan A","lastName": "Pérez","birthDate": "1990-01-01","alias": "juanp","email": "juan@example.com","phoneNumber": "+521234567890","departament": "Finanzas","street": "Calle Falsa 123","postalCode": 12345,"city": "Ciudad de México","state": "CDMX","country": "México","wallet": {"balance": 2500.00,"currency": "MXN"}}| Yes| Pedro | Actualizar Usuario
 
 ## ENDPOINTS Estrategias
 
