@@ -125,29 +125,29 @@ async function GetSimulationsForRangeDate(req) {
 // Función para actualizar el nombre de la simulación
 async function UpdateSimulationName(req) {
   try {
-    const { idSimulation, newName } = req.data;
+    const { IDSIMULATION, newName } = req.data;
 
     // Validación de entrada
-    if (!idSimulation || !newName) {
+    if (!IDSIMULATION || !newName) {
       throw new Error('Se requiere el ID de la simulación y el nuevo nombre.');
     }
 
     // Verificar que exista la simulación
-    const simulation = await simulationSchema.findOne({ idSimulation }).lean();
+    const simulation = await simulationSchema.findOne({ IDSIMULATION }).lean();
     if (!simulation) {
-      throw new Error(`Simulación con ID ${idSimulation} no encontrada.`);
+      throw new Error(`Simulación con ID ${IDSIMULATION} no encontrada.`);
     }
 
     // Actualizar el nombre de la simulación
     await simulationSchema.updateOne(
-      { idSimulation },
-      { $set: { simulationName: newName } }
+      { IDSIMULATION },
+      { $set: { SIMULATIONNAME: newName } }
     );
 
     return {
       success: true,
       message: `Nombre de la simulación actualizado a "${newName}".`,
-      idSimulation,
+      IDSIMULATION,
       newName
     };
 

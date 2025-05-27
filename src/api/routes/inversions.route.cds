@@ -132,7 +132,7 @@
         @Core.Description: 'Update simulation name by ID'
         @path: 'UpdateSimulationName'
         action UpdateSimulationName(
-            idSimulation: String,
+            IDSIMULATION: String,
             newName: String
         ) returns {
             message: String;
