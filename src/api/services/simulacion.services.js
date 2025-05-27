@@ -14,22 +14,22 @@ async function GetAllSimulation(req) {
     return error;
   }
 }
-//FALTA POR ACTUALIZAR
+//OBTENER SIMULACIONES POR USUARIO
 async function GetSimulationsByUserId(req) {
   try {
     // Obtener el USER_ID desde el cuerpo de la solicitud (req.data)
-    const { USER_ID } = req.data; // Asumiendo que el body es { "USER_ID": "user-001" }
+    const { IDUSER } = req.data; // Asumiendo que el body es { "USER_ID": "user-001" }
 
-    if (!USER_ID) {
+    if (!IDUSER) {
       throw new Error("El ID de usuario no fue proporcionado.");
     }
 
     // Buscar todas las simulaciones del usuario por el ID en la base de datos
-    const simulations = await simulationSchema.find({ idUser: USER_ID }).lean(); 
+    const simulations = await simulationSchema.find({ IDUSER: IDUSER}).lean(); 
 
     // Verificar si no hay simulaciones
     if (!simulations || simulations.length === 0) {
-      throw new Error(`No se encontraron simulaciones para el usuario con ID ${USER_ID}`);
+      throw new Error(`No se encontraron simulaciones para el usuario con ID ${IDUSER}`);
     }
 
     // Retornar todas las simulaciones encontradas
@@ -188,6 +188,7 @@ async function SimulateIronCondor(req) {
       throw new Error('Faltan datos obligatorios para la simulación.');
     }
 
+    //VALIDACIONES DE SI EXISTE LA ESTRATEGIA
     // Buscar la estrategia por idStrategy y validar LABELID
     const strategy = await strategiesSchema.findOne({ LABELID: idStrategy }).lean();
 
@@ -205,7 +206,6 @@ async function SimulateIronCondor(req) {
       });
     }
 
-
     //VALIDACIONES USUARIO
     const user = await usersSchema.findOne({ idUser }).lean();
     if (!user) throw cds.error('Usuario no encontrado.', { code: 'USER_NOT_FOUND', status: 404 });
@@ -217,14 +217,13 @@ async function SimulateIronCondor(req) {
       });
     }
 
-    // Cálculos simulados
-    //const IndicadorVIX = await calculateVolatility(symbol);
-
+    // Cálculos simulados 
     const premiumShortCall = await calculateOptionPremium(symbol, shortCallStrike, 'call', 'sell');
     const premiumLongCall = await calculateOptionPremium(symbol, longCallStrike, 'call', 'buy');
     const premiumShortPut = await calculateOptionPremium(symbol, shortPutStrike, 'put', 'sell');
     const premiumLongPut = await calculateOptionPremium(symbol, longPutStrike, 'put', 'buy');
-
+    
+    //DATOS FINALES DE LA SIMULACION
     const netCredit = premiumShortCall + premiumShortPut - premiumLongCall - premiumLongPut;
     const maxLoss = (longCallStrike - shortCallStrike) + (shortPutStrike - longPutStrike) - netCredit;
     const maxProfit = netCredit;
@@ -238,6 +237,7 @@ async function SimulateIronCondor(req) {
     const idSimulation = uuidv4();
     //console.log('Valor idSimulation:', idSimulation);
 
+    //CREACION DEL ESQUEMA DE SIGNALS DEL MODELO DE SIMULACION
     const signals = [
       {
         DATE: entryDate,
@@ -269,6 +269,7 @@ async function SimulateIronCondor(req) {
       }
     ];
 
+    //CREACION DEL RESUMEN DEL MODELO DE SIMULACION
     const summary = {
       TOTALBOUGHTUNITS: 2,
       TOTALSOLDUNITS: 2,
@@ -280,7 +281,7 @@ async function SimulateIronCondor(req) {
       PERCENTAGERETURN: percentageReturn
     };
 
-
+    //CREACION DEL DETALLE DEL MODELO DE SIMULACION
     const detailRow = [
       {
         ACTIVED: true,

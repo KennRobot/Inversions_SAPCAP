@@ -89,7 +89,7 @@
 
         @Core.Description: 'get-simulations-by-user'
         @path            : 'GetSimulationsByUserId'
-        function GetSimulationsByUserId(USER_ID : String)                     returns simulation;
+        function GetSimulationsByUserId(IDUSER : String)                     returns simulation;
 
         @Core.Description: 'get-simulations-by-symbols'
         @path            : 'GetSimulationBySymbols'
@@ -98,10 +98,6 @@
         @Core.Description: 'get-simulations-for-range-amount'
         @path            : 'GetSimulationForMonto'
         function GetSimulationForMonto(min: Integer, max: Integer)           returns simulation;
-       
-        @Core.Description: 'get-simulations-by-user'
-        @path            : 'GetSimulatonByUserId'
-        function GetSimulatonByUserId(USER_ID : String)                     returns simulation;
 
         @Core.Description: 'get-simulations-for-range-date'
         @path            : 'GetSimulationsForRangeDate'

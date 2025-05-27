@@ -123,7 +123,7 @@ function calculateMACD(closes, shortPeriod = 12, longPeriod = 26) {
 async function generateChartData(symbol) {
   const { data, closePrices } = await getValidClosePrices(symbol);
   const closes = data.map(entry => entry.last).filter(p => p > 0);
-  console.log("Cantidad de datos:", closes.length);
+  //console.log("Cantidad de datos:", closes.length);
 
   if (closes.length < 30) {
     throw new Error(`No hay suficientes datos para ${symbol}. Tiene ${closes.length}`);
@@ -132,9 +132,9 @@ async function generateChartData(symbol) {
   const volatility = computeVolatility(closePrices);
   const rsiArray = calculateRSIArray(closes);
   const macdArray = calculateMACD(closes);
-  console.log('RSI primeros 30:', rsiArray.slice(0, 30));
-  console.log('Primeros 20 cierres:', closes.slice(0, 20));
-  console.log("Longitudes => closes:", closes.length, "rsiArray:", rsiArray.length, "macdArray:", macdArray.length);
+  //console.log('RSI primeros 30:', rsiArray.slice(0, 30));
+  //console.log('Primeros 20 cierres:', closes.slice(0, 20));
+  //console.log("Longitudes => closes:", closes.length, "rsiArray:", rsiArray.length, "macdArray:", macdArray.length);
 
 
 const chart_data = data.map((entry, idx) => {
