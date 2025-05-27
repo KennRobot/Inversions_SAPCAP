@@ -223,6 +223,8 @@ async function SimulateIronCondor(req) {
     const premiumShortPut = await calculateOptionPremium(symbol, shortPutStrike, 'put', 'sell');
     const premiumLongPut = await calculateOptionPremium(symbol, longPutStrike, 'put', 'buy');
     
+    const specs = `Iron Condor - CALL:${shortCallStrike}/${longCallStrike}, PUT:${shortPutStrike}/${longPutStrike}, EXP:${expiryDate}`;
+
     //DATOS FINALES DE LA SIMULACION
     const netCredit = premiumShortCall + premiumShortPut - premiumLongCall - premiumLongPut;
     const maxLoss = (longCallStrike - shortCallStrike) + (shortPutStrike - longPutStrike) - netCredit;
@@ -297,6 +299,8 @@ async function SimulateIronCondor(req) {
       }
     ];
 
+
+
     // Guardar en MongoDB
     await simulationSchema.create({
       IDSIMULATION: idSimulation,
@@ -304,7 +308,7 @@ async function SimulateIronCondor(req) {
       IDSTRATEGY: idStrategy,
       SIMULATIONNAME: simulationName,
       SYMBOL: symbol,
-      SPECS: `Iron Condor - CALL:${shortCallStrike}/${longCallStrike}, PUT:${shortPutStrike}/${longPutStrike}, EXP:${expiryDate}`,
+      SPECS: specs,
       AMOUNT: amount,
       STARTDATE: startDate,
       ENDDATE: endDate,
@@ -321,12 +325,14 @@ async function SimulateIronCondor(req) {
     return {
       saved: true,
       simulationId: idSimulation,
-      netCredit,
-      maxLoss,
-      maxProfit,
-      riskRewardRatio,
-      percentageReturn,
-      updatedBalance
+      idStrategy,
+      simulationName,
+      symbol,
+      specs,
+      summary,
+      signals,
+      updatedBalance,
+      chartData
     };
 
   } catch (error) {
