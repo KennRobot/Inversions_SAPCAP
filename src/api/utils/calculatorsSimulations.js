@@ -76,26 +76,38 @@ function calculateEMA(closes, period) {
   return emaArray;
 }
 
-function calculateRSIArray(closes, period = 14) {
+function calculateRSIArray(closes, period = 14) { //GENERALMENTE 14 DIAS
   const rsiArray = Array(closes.length).fill(null);
   if (closes.length < period + 1) return rsiArray;
 
-  for (let i = period; i < closes.length; i++) {
-    const window = closes.slice(i - period, i + 1);
-    let gains = 0, losses = 0;
-    for (let j = 1; j < window.length; j++) {
-      const change = window[j] - window[j - 1];
-      if (change > 0) gains += change;
-      else losses -= change;
-    }
-    gains /= period;
-    losses /= period;
-    const rs = losses === 0 ? 100 : gains / losses;
-    const rsi = losses === 0 ? 100 : 100 - (100 / (1 + rs));
-    rsiArray[i] = parseFloat(rsi.toFixed(2));
+  let gains = 0, losses = 0;
+  for (let i = 1; i <= period; i++) {
+    const delta = closes[i] - closes[i - 1];
+    if (delta > 0) gains += delta;
+    else losses -= delta;
   }
+
+  gains /= period;
+  losses /= period;
+
+  let rs = gains / (losses || 1);
+  rsiArray[period] = parseFloat((100 - 100 / (1 + rs)).toFixed(2));
+
+  for (let i = period + 1; i < closes.length; i++) {
+    const delta = closes[i] - closes[i - 1];
+    const gain = delta > 0 ? delta : 0;
+    const loss = delta < 0 ? -delta : 0;
+
+    gains = (gains * (period - 1) + gain) / period;
+    losses = (losses * (period - 1) + loss) / period;
+
+    rs = gains / (losses || 1);
+    rsiArray[i] = parseFloat((100 - 100 / (1 + rs)).toFixed(2));
+  }
+
   return rsiArray;
 }
+
 
 
 function calculateMACD(closes, shortPeriod = 12, longPeriod = 26) {
@@ -110,23 +122,32 @@ function calculateMACD(closes, shortPeriod = 12, longPeriod = 26) {
 // === FUNCIÓN: Generar datos del gráfico con indicadores ===
 async function generateChartData(symbol) {
   const { data, closePrices } = await getValidClosePrices(symbol);
-  const closes = data.map(entry => entry.last);
+  const closes = data.map(entry => entry.last).filter(p => p > 0);
+  console.log("Cantidad de datos:", closes.length);
 
   if (closes.length < 30) {
     throw new Error(`No hay suficientes datos para ${symbol}. Tiene ${closes.length}`);
   }
 
   const volatility = computeVolatility(closePrices);
-  const rsiArray = calculateRSIArray(closes);  // <-- aquí usamos el nuevo RSI por array
+  const rsiArray = calculateRSIArray(closes);
   const macdArray = calculateMACD(closes);
+  console.log('RSI primeros 30:', rsiArray.slice(0, 30));
+  console.log('Primeros 20 cierres:', closes.slice(0, 20));
+  console.log("Longitudes => closes:", closes.length, "rsiArray:", rsiArray.length, "macdArray:", macdArray.length);
 
-  return data.map((entry, i) => ({
+
+const chart_data = data.map((entry, idx) => {
+  const rsiValue = rsiArray[idx];
+  const macdValue = macdArray[idx];
+
+  return {
     DATE: entry.date,
     OPEN: entry.open ?? null,
     HIGH: entry.high ?? null,
     LOW: entry.low ?? null,
     CLOSE: entry.last,
-    VOLUME: entry.volume,
+    VOLUME: entry.volume ?? 0,
     INDICATORS: [
       {
         INDICATOR: 'VIX',
@@ -134,14 +155,18 @@ async function generateChartData(symbol) {
       },
       {
         INDICATOR: 'RSI',
-        VALUE: rsiArray[i]
+        VALUE: typeof rsiValue === 'number' && !isNaN(rsiValue) ? parseFloat(rsiValue.toFixed(2)) : null
       },
       {
         INDICATOR: 'MACD',
-        VALUE: macdArray[i]
+        VALUE: typeof macdValue === 'number' && !isNaN(macdValue) ? parseFloat(macdValue.toFixed(4)) : null
       }
-    ].filter(ind => ind.VALUE !== null)
-  }));
+    ].filter(i => i.VALUE !== null)
+  };
+}).filter(item => item.INDICATORS.length === 3); // 🔥 Asegura que estén los 3 indicadores
+
+
+  return chart_data;
 }
 
 
