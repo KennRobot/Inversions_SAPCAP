@@ -54,8 +54,8 @@ longCallStrike > shortCallStrike
 longPutStrike < shortPutStrike
 * idUser: "user-001": Identificador del usuario que hace la simulación.
 * amount: Monto de dinero que el usuario está dispuesto a usar en la simulación.
-* startDate: "2025-05-15": Fecha de inicio para evaluar la simulación (similar a entryDate).
-* endDate: "2025-06-15": Fecha final para evaluar la simulación (similar a expiryDate).
+* startDate: "2025-05-15": inicio del rango de tiempo del análisis histórico de precios.
+* endDate: "2025-06-15": fin del rango de tiempo del análisis histórico de precios.
 * simulationName: "Iron Condor AMZN": Nombre descriptivo para identificar la simulación.
 * idStrategy: "IronCondor":Tipo de estrategia a simular (en este caso Iron Condor).
 
