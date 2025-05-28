@@ -271,6 +271,8 @@ async function SimulateIronCondor(req) {
       }
     ];
 
+    const balanceUser = user.wallet.balance;
+
     //CREACION DEL RESUMEN DEL MODELO DE SIMULACION
     const summary = {
       TOTALBOUGHTUNITS: 2,
@@ -278,11 +280,12 @@ async function SimulateIronCondor(req) {
       REMAININGUNITS: 0,
       FINALCASH: amount + netCredit,
       FINALVALUE: 0,
-      FINALBALANCE: amount + netCredit,
+      FINALBALANCE: netCredit + balanceUser,
       REALPROFIT: netCredit,
       PERCENTAGERETURN: percentageReturn
     };
 
+    
     //CREACION DEL DETALLE DEL MODELO DE SIMULACION
     const detailRow = [
       {
@@ -318,7 +321,7 @@ async function SimulateIronCondor(req) {
       DETAIL_ROW: detailRow
     });
 
-    // Actualizar saldo de usuario
+        // Actualizar saldo de usuario
     const profitOrLoss = summary.REALPROFIT;
     const updatedBalance = await updateUserWallet(idUser, profitOrLoss, symbol);
 
