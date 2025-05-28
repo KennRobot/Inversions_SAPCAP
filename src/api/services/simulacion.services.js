@@ -380,5 +380,73 @@ async function updateUserWallet(userId, profitOrLoss, symbol) {
   }
 }
 
+// Delete Logico 
+async function DeleteSimulationLogical(req) {
+  const { IDSIMULATION } = req.data;
+  if (!IDSIMULATION) {
+    const err = new Error("Se requiere 'IDSIMULATION'");
+    err.status = 400;
+    throw err;
+  }
 
-module.exports = { GetAllSimulation, GetSimulationsByUserId, SimulateIronCondor, UpdateSimulationName, DeleteSimulationById, GetSimulationBySymbols, GetSimulationForMonto, GetSimulationsForRangeDate };
+  // Buscar la simulación
+  const doc = await simulationSchema.findOne({ IDSIMULATION });
+  if (!doc) {
+    const err = new Error(`Simulación ${IDSIMULATION} no encontrada`);
+    err.status = 404;
+    throw err;
+  }
+
+  // Asegurar que DETAIL_ROW es array y tomar el primer elemento
+  const detailArr = Array.isArray(doc.DETAIL_ROW) ? doc.DETAIL_ROW : [];
+  if (detailArr.length === 0) {
+    detailArr[0] = { ACTIVED: true, DELETED: false, DETAIL_ROW_REG: [] };
+  }
+  const detail = detailArr[0];
+
+  // Obtener reguser del primer registro previo (si existe)
+  const prevRegs = Array.isArray(detail.DETAIL_ROW_REG)
+    ? detail.DETAIL_ROW_REG
+    : [];
+  const firstReg = prevRegs[0];
+  const reguser  = firstReg?.REGUSER || 'system';
+
+  // Invertir ACTIVED y calcular DELETED
+  const newActivated = !detail.ACTIVED;
+  const newDeleted   = !newActivated;
+  const now          = new Date();
+
+  // Marcar todos los previos DETAIL_ROW_REG como CURRENT=false
+  const updatedRegs = prevRegs.map(r => ({
+    CURRENT: false,
+    REGDATE: r.REGDATE,
+    REGTIME: r.REGTIME,
+    REGUSER: r.REGUSER
+  }));
+
+  // Agregar nuevo registro con CURRENT=true
+  updatedRegs.push({
+    CURRENT: true,
+    REGDATE: now,
+    REGTIME: now.toISOString(),  // o lo que uses
+    REGUSER: reguser
+  });
+
+  // Asignar de vuelta al documento
+  detail.ACTIVED        = newActivated;
+  detail.DELETED        = newDeleted;
+  detail.DETAIL_ROW_REG = updatedRegs;
+  doc.DETAIL_ROW = [ detail ];
+
+  // Guardar
+  await doc.save();
+
+  // Retornar mensaje
+  const message = newActivated
+    ? 'La simulación ha sido ACTIVADA'
+    : 'La simulación ha sido DESACTIVADA';
+
+  return { message };
+}
+
+module.exports = { GetAllSimulation, GetSimulationsByUserId, SimulateIronCondor, UpdateSimulationName, DeleteSimulationById, GetSimulationBySymbols, GetSimulationForMonto, GetSimulationsForRangeDate, DeleteSimulationLogical };

@@ -94,5 +94,58 @@ async function GetStrategiesByUser(req) {
   }
 }
 
+// Borrado logico 
+async function DeleteStrategyLogical(req) {
+  const { LABELID } = req.data;
+  if (!LABELID) {
+    const err = new Error("Se requiere 'LABELID'");
+    err.status = 400;
+    throw err;
+  }
 
-module.exports = { GetAllStrategies, CreateStrategy, GetStrategiesByUser };
+  // Cargar el doc
+  const doc = await strategiesSchema.findOne({ LABELID });
+  if (!doc) {
+    const err = new Error(`Estrategia con LABELID=${LABELID} no encontrada`);
+    err.status = 404;
+    throw err;
+  }
+
+  // Extraer el usuario del primer registro
+  const firstReg = doc.DETAIL_ROW.DETAIL_ROW_REG[0];
+  const userId   = (firstReg && firstReg.REGUSER) ? firstReg.REGUSER : 'system';
+
+  // Invertir ACTIVED y calcular DELETED
+  const newActivated = !doc.DETAIL_ROW.ACTIVED;
+  const newDeleted   = !newActivated;
+  const now          = new Date();
+
+  // Marcar todos los registros previos CURRENT=false
+  const regs = doc.DETAIL_ROW.DETAIL_ROW_REG.map(r => ({
+    ...r.toObject(),
+    CURRENT: false
+  }));
+
+  // Agregar el nuevo registro como CURRENT=true usando userId
+  regs.push({
+    CURRENT: true,
+    REGDATE: now,
+    REGTIME: now,
+    REGUSER: userId
+  });
+
+  // Guardar cambios en el documento
+  doc.DETAIL_ROW.ACTIVED        = newActivated;
+  doc.DETAIL_ROW.DELETED        = newDeleted;
+  doc.DETAIL_ROW.DETAIL_ROW_REG = regs;
+  await doc.save();
+
+  // Mensaje según nuevo estado
+  const message = newActivated
+    ? 'La estrategia ha sido ACTIVADA'
+    : 'La estrategia ha sido DESACTIVADA';
+
+  return { message };
+}
+
+module.exports = { GetAllStrategies, CreateStrategy, GetStrategiesByUser, DeleteStrategyLogical };

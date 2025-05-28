@@ -82,6 +82,15 @@
         @path            : 'GetStrategiesByUser'
         function GetStrategiesByUser(USER_ID : String)             returns array of strategies;
 
+        //Borrado logico de estrategias
+        @Core.Description: 'logical-delete-strategy'
+        @path: 'DeleteStrategyLogical'
+        action DeleteStrategyLogical(
+            LABELID : String
+        ) returns {
+            message : String;
+        };
+
         //****************** Simulation *******************************
         @Core.Description: 'get-all-simulations'
         @path            : 'GetAllSimulation'
@@ -137,6 +146,14 @@
         ) returns {
             message: String;
         };
+        // Borrado logico de simulaciones
+        @Core.Description: 'logical-delete-simulation'
+        @path: 'DeleteSimulationLogical'
+        action DeleteSimulationLogical(
+            IDSIMULATION : String
+        ) returns {
+            message : String;
+        };
 
         //****************** Nuevo: Obtener Opciones Históricas *******************************
         @Core.Description: 'Get Historical Options '
@@ -170,4 +187,5 @@
             IDSIMULATION: String;
             status: String;
         };
+        
     }

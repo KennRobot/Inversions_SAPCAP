@@ -1,7 +1,7 @@
 const cds = require('@sap/cds');
 const {GetAllUsers,GetUserById, CreateUser, UpdateUser } = require('../services/users.services')
-const {GetAllStrategies, CreateStrategy, GetStrategiesByUser} = require('../services/strategies.services')
-const {GetAllSimulation, GetSimulationsByUserId, SimulateIronCondor, UpdateSimulationName, DeleteSimulationById, GetSimulationBySymbols, GetSimulationForMonto, GetSimulationsForRangeDate} = require('../services/simulacion.services')
+const {GetAllStrategies, CreateStrategy, GetStrategiesByUser,DeleteStrategyLogical} = require('../services/strategies.services')
+const {GetAllSimulation, GetSimulationsByUserId, SimulateIronCondor, UpdateSimulationName, DeleteSimulationById, GetSimulationBySymbols, GetSimulationForMonto, GetSimulationsForRangeDate, DeleteSimulationLogical} = require('../services/simulacion.services')
 const {GetAllPricesHistory , calculateIndicators, GetPricesHistoryBySymbol} = require('../services/priceshistory.services')
 
 
@@ -53,6 +53,11 @@ module.exports = class InversionsClass extends cds.ApplicationService {
             return await GetStrategiesByUser(req);
         });
 
+        //Borrado logico de estrategias
+        this.on('DeleteStrategyLogical', async req => {
+        return await DeleteStrategyLogical(req);
+        });
+
         //****************** PARA SIMULATION ***********************/
         this.on('GetAllSimulation', async (req) => {
             return await GetAllSimulation(req);
@@ -88,6 +93,10 @@ module.exports = class InversionsClass extends cds.ApplicationService {
         const { id } = req.data;
         if (!id) return req.reject(400, 'Falta el parámetro "id"');
         return await DeleteSimulationById(id);
+        });
+        //Borrado logico de simulacion
+        this.on('DeleteSimulationLogical', async req => {
+        return await DeleteSimulationLogical(req);
         });
 
         //****************** PARA OBTENER OPCIONES HISTÓRICAS ***********************/
