@@ -119,7 +119,7 @@ Endpoint | URL | Body | Finish | Creator | Description
 ---------|----------|---------|---------|---------|---------
 `GET`  |  /api/inv/GetAllStrategies | none | Yes| Kennby| Todos las estrategias
 `POST` | api/inv/CreateStrategy | {"VALUEID": "IDIRON_","LABELID": "IRON_CONDOR","VALUE": "Iron Condor Premium","COMPANYID": 1,"CEDIID": 1,"ALIAS": "condor-prem","SEQUENCE": 2,"IMAGE":"iron-condor.png","DESCRIPTION": "Estrategia avanzada de opciones con cobertura","USER_ID": "user_123"} | Yes| Pedro| Nueva estrategia
-
+`POST`  |  /api/inv/DeleteStrategyLogical | { "LABELID": "IRON_CONDORv2" } | Yes | Jesus | Borrado logico de la estrategia
 
 
 ## ENDPOINTS Simulacion
@@ -136,7 +136,7 @@ Endpoint | URL | Body | Finish | Creator | Description
 `POST`  |  /api/inv/UpdateSimulationName | {"IDSIMULATION": "6eeebbe3-fee3-46e7-a846-1fc27c90254e","newName": "Iron condor v2"} | YES| Pedro | editar solo el nombre
 `POST`  |  /api/inv/DeleteSimulation | {"id": "4e92de0e-aacf-463e-bb20-f40e8c3cf007"}| YES | Jesus | eliminar la simulacion
 `POST`  |  /api/inv/SimulateIronCondor | {"symbol": "AMZN","entryDate": "2025-05-15","expiryDate": "2025-06-15","shortCallStrike": 110,"longCallStrike": 115,"shortPutStrike": 90,"longPutStrike": 85,"idUser": "user-002","amount": 10000,"startDate": "2025-05-15", "endDate":"2025-06-15","simulationName": "Iron Condor AMZN", "idStrategy": "IronCondor"  }" | Yes | Pedro/Jesus | comenzar la simulacion usando la estrategia seleccionada
-
+`POST`  |  /api/inv/DeleteSimulationLogical | { "IDSIMULATION": "4df2506b-fdd3-4fd2-bfb0-a031631da8ec" } | Yes | Jesus | Borrado logico de la simulacion
 
 
 
