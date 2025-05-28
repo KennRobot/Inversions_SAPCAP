@@ -78,10 +78,6 @@
             USER_ID     : String null
         ) returns strategies;
 
-        @Core.Description: 'Get strategies by user ID'
-        @path            : 'GetStrategiesByUser'
-        function GetStrategiesByUser(USER_ID : String)             returns array of strategies;
-
         //Borrado logico de estrategias
         @Core.Description: 'logical-delete-strategy'
         @path: 'DeleteStrategyLogical'
@@ -164,23 +160,6 @@
         @path            : 'GetPricesHistoryBySymbol'
         function GetPricesHistoryBySymbol(symbol : String)         returns array of priceshistory;
 
-        //****************** Nuevo: Calcular Indicadores *******************************
-        @Core.Description: 'Calculate investment indicators'
-        @path: 'CalculateIndicators'
-        action CalculateIndicators(
-            symbol: String,
-            timeframe: String,
-            interval: String,
-            indicators: array of String
-        ) returns {
-            symbol: String;
-            timeframe: String;
-            interval: String;
-            calculatedIndicators: {
-                RSI: Decimal(5,2);
-                MACD: Decimal(5,2);
-            }
-        };
         // Delete a simulation by ID
         @path: 'deleteSimulation'
         action DeleteSimulation(id: String) returns {

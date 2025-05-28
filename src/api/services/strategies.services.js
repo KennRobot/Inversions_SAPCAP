@@ -76,24 +76,6 @@ async function CreateStrategy(req) {
   }
 }
 
-async function GetStrategiesByUser(req) {
-  try {
-    // Obtener el USER_ID desde el cuerpo de la solicitud (req.data)
-    const { USER_ID } = req.data; // Asumiendo que el body es { "USER_ID": "user-001" }
-
-    if (!USER_ID) {
-      throw new Error("El ID de usuario no fue proporcionado.");
-    }
-
-    // Buscar estrategias por el userId
-    const strategies = await strategiesSchema.find({ USER_ID }).lean();
-    
-    return strategies;
-  } catch (error) {
-    throw new Error(`Error al obtener las estrategias: ${error.message}`);
-  }
-}
-
 // Borrado logico 
 async function DeleteStrategyLogical(req) {
   const { LABELID } = req.data;
@@ -148,4 +130,4 @@ async function DeleteStrategyLogical(req) {
   return { message };
 }
 
-module.exports = { GetAllStrategies, CreateStrategy, GetStrategiesByUser, DeleteStrategyLogical };
+module.exports = { GetAllStrategies, CreateStrategy, DeleteStrategyLogical };
