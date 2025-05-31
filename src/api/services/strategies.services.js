@@ -76,6 +76,24 @@ async function CreateStrategy(req) {
   }
 }
 
+//Actualizar Estrategia
+async function UpdateStrategy(req) {
+  try {
+    const { LABELID, VALUE, ALIAS, VALUEID, DESCRIPTION } = req.data;
+    
+    
+  } catch (error) {
+    console.error('Error en UpdateStrategy:', error);
+    if (error.status) {
+      throw error; // Preserva errores personalizados
+    }
+    throw {
+      status: 500,
+      message: `Error al actualizar la estrategia: ${error.message}`
+    };
+  }
+}
+
 // Borrado logico 
 async function DeleteStrategyLogical(req) {
   const { LABELID } = req.data;
