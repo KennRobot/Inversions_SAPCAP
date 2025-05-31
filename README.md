@@ -120,6 +120,8 @@ Endpoint | URL | Body | Finish | Creator | Description
 `GET`  |  /api/inv/GetAllStrategies | none | Yes| Kennby| Todos las estrategias
 `POST` | api/inv/CreateStrategy | {"VALUEID": "IDIRON_","LABELID": "IRON_CONDOR","VALUE": "Iron Condor Premium","COMPANYID": 1,"CEDIID": 1,"ALIAS": "condor-prem","SEQUENCE": 2,"IMAGE":"iron-condor.png","DESCRIPTION": "Estrategia avanzada de opciones con cobertura","USER_ID": "user_123"} | Yes| Pedro| Nueva estrategia
 `POST`  |  /api/inv/DeleteStrategyLogical | { "LABELID": "IRON_CONDORv2" } | Yes | Jesus | Borrado logico de la estrategia
+`POST`  |  /api/inv/GetAllStrategies | {"LABELID": "IdStrategy","VALUE": "Nueva Estrategia","ALIAS": "Alias actualizado","VALUEID": "VAL001","DESCRIPTION": "Descripción actualizada","USER_ID": "admin_user"} | Yes | Jesus | Actualizar datos de estrategia
+
 
 
 ## ENDPOINTS Simulacion
