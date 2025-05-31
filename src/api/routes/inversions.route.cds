@@ -87,6 +87,21 @@
             message : String;
         };
 
+        //Actualizar estrategia
+                // Update a simulation name by ID
+        @Core.Description: 'Update strategie  by LABELID'
+        @path: 'UpdateStrategy'
+        action UpdateStrategy(
+            LABELID: String,
+            VALUE: String,
+            ALIAS: String,
+            VALUEID: String,
+            DESCRIPTION: String,
+            USER_ID: String
+        ) returns {
+            message: String;
+        };
+
         //****************** Simulation *******************************
         @Core.Description: 'get-all-simulations'
         @path            : 'GetAllSimulation'

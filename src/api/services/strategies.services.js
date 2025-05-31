@@ -79,13 +79,63 @@ async function CreateStrategy(req) {
 //Actualizar Estrategia
 async function UpdateStrategy(req) {
   try {
-    const { LABELID, VALUE, ALIAS, VALUEID, DESCRIPTION } = req.data;
-    
-    
+    const { 
+      LABELID,
+      VALUE,
+      ALIAS,
+      VALUEID,
+      DESCRIPTION,
+      USER_ID // Para registrar quién realizó la actualización
+    } = req.data;
+
+    // Validación básica
+    if (!LABELID) {
+      throw {
+        status: 400,
+        message: 'LABELID es obligatorio para actualizar una estrategia.'
+      };
+    }
+
+    // Buscar la estrategia existente por LABELID
+    const strategy = await strategiesSchema.findOne({ LABELID });
+
+    if (!strategy) {
+      throw {
+        status: 404,
+        message: `No se encontró ninguna estrategia con LABELID: ${LABELID}`
+      };
+    }
+
+    // Actualizar los campos si están presentes en el request
+    if (VALUE !== undefined) strategy.VALUE = VALUE;
+    if (ALIAS !== undefined) strategy.ALIAS = ALIAS;
+    if (VALUEID !== undefined) strategy.VALUEID = VALUEID;
+    if (DESCRIPTION !== undefined) strategy.DESCRIPTION = DESCRIPTION;
+
+    // Actualizar DETAIL_ROW para registrar modificación
+    if (!strategy.DETAIL_ROW) strategy.DETAIL_ROW = {};
+    if (!Array.isArray(strategy.DETAIL_ROW.DETAIL_ROW_REG)) {
+      strategy.DETAIL_ROW.DETAIL_ROW_REG = [];
+    }
+
+    strategy.DETAIL_ROW.DETAIL_ROW_REG.push({
+      CURRENT: false, // Puedes marcar los anteriores como no actuales
+      REGDATE: new Date(),
+      REGTIME: new Date(),
+      REGUSER: USER_ID || 'system'
+    });
+
+    // Opcionalmente, podrías marcar solo el último como CURRENT = true
+    strategy.DETAIL_ROW.DETAIL_ROW_REG[strategy.DETAIL_ROW.DETAIL_ROW_REG.length - 1].CURRENT = true;
+
+    // Guardar cambios
+    const updatedStrategy = await strategy.save();
+    return updatedStrategy.toObject();
+
   } catch (error) {
     console.error('Error en UpdateStrategy:', error);
     if (error.status) {
-      throw error; // Preserva errores personalizados
+      throw error; // Errores personalizados
     }
     throw {
       status: 500,
@@ -93,6 +143,8 @@ async function UpdateStrategy(req) {
     };
   }
 }
+
+
 
 // Borrado logico 
 async function DeleteStrategyLogical(req) {
@@ -148,4 +200,4 @@ async function DeleteStrategyLogical(req) {
   return { message };
 }
 
-module.exports = { GetAllStrategies, CreateStrategy, DeleteStrategyLogical };
+module.exports = { GetAllStrategies, CreateStrategy, DeleteStrategyLogical, UpdateStrategy };

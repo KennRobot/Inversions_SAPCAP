@@ -1,6 +1,6 @@
 const cds = require('@sap/cds');
 const {GetAllUsers,GetUserById, CreateUser, UpdateUser } = require('../services/users.services')
-const {GetAllStrategies, CreateStrategy,DeleteStrategyLogical} = require('../services/strategies.services')
+const {GetAllStrategies, CreateStrategy,DeleteStrategyLogical, UpdateStrategy} = require('../services/strategies.services')
 const {GetAllSimulation, GetSimulationsByUserId, SimulateIronCondor, UpdateSimulationName, DeleteSimulationById, GetSimulationBySymbols, GetSimulationForMonto, GetSimulationsForRangeDate, DeleteSimulationLogical} = require('../services/simulacion.services')
 const {GetAllPricesHistory , calculateIndicators, GetPricesHistoryBySymbol} = require('../services/priceshistory.services')
 
@@ -53,6 +53,17 @@ module.exports = class InversionsClass extends cds.ApplicationService {
         //Borrado logico de estrategias
         this.on('DeleteStrategyLogical', async req => {
         return await DeleteStrategyLogical(req);
+        });
+
+        //Evento para actualizar estrategia
+        this.on('UpdateStrategy', async (req) => {
+            try {
+                const strategy = await UpdateStrategy(req);
+                return strategy;
+            } catch (err) {
+                if (err.status) return req.reject(err.status, err.message);
+                return req.reject(500, err.message);
+            }
         });
 
         //****************** PARA SIMULATION ***********************/
